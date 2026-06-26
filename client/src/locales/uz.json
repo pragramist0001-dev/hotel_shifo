@@ -1,0 +1,260 @@
+{
+  "nav": {
+    "dashboard": "Bosh sahifa",
+    "rooms": "Xonalar",
+    "checkIn": "Joylashtirish",
+    "clients": "Mijozlar",
+    "finance": "Moliya",
+    "staff": "Xodimlar",
+    "reports": "Hisobotlar",
+    "logout": "Chiqish"
+  },
+  "common": {
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "add": "Qo'shish",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "close": "Yopish",
+    "search": "Qidirish...",
+    "status": "Holati",
+    "actions": "Harakatlar",
+    "yes": "Ha",
+    "no": "Yo'q",
+    "loading": "Yuklanmoqda...",
+    "success": "Muvaffaqiyatli",
+    "error": "Xatolik"
+  },
+  "dashboard": {
+    "title": "Bosh sahifa",
+    "subtitle": "Mehmonxona holati va moliyaviy ko'rsatkichlar.",
+    "income": "Umumiy daromad (Bugun)",
+    "daily_income": "Kunlik tushum",
+    "occupied_rooms": "Band xonalar",
+    "occupancy_rate": "bandlik",
+    "check_ins_today": "Bugungi joylashtirishlar",
+    "new_check_ins": "Yangi kirimlar",
+    "check_outs_expected": "Kutilayotgan chiqishlar",
+    "check_outs_today": "Bugungi chiqishlar",
+    "revenue_7days": "Oxirgi 7 kunlik daromad",
+    "room_types": "Xona turlari bo'yicha bandlik"
+  },
+  "reception": {
+    "title": "Qabulxona (Reception)",
+    "subtitle": "Xonalar holatini boshqarish va mijozlarni joylashtirish."
+  },
+  "roomType": {
+    "ekonom": "Ekonom",
+    "standartplus": "Standart Plus",
+    "lyuks": "Lyuks"
+  },
+  "rooms": {
+    "title": "Xonalar Xaritasi",
+    "subtitle": "Mehmonxona xonalarining real-time holati.",
+    "add_room": "Yangi xona qo'shish",
+    "status": {
+      "available": "Bo'sh",
+      "booked": "Band",
+      "cleaning": "Tozalanmoqda",
+      "maintenance": "Ta'mirda",
+      "unknown": "Noma'lum"
+    },
+    "click_finish_clean": "Tozalash tugadimi? (Bosish)"
+  },
+  "checkin": {
+    "title": "Mijozni Ro'yxatga Olish",
+    "subtitle": "Yangi mijoz ma'lumotlarini kiritib xonaga joylashtiring.",
+    "personal_info": "Shaxsiy ma'lumotlar",
+    "fullname": "F.I.SH *",
+    "phone": "Telefon raqam *",
+    "birth_year": "Tug'ilgan yili *",
+    "country": "Davlat / Viloyat *",
+    "gender": "Jinsi",
+    "gender_male": "Erkak",
+    "gender_female": "Ayol",
+    "marital_status": "Oilaviy holat",
+    "marital_single": "Bo'ydoq / Turmushga chiqmagan",
+    "marital_married": "Oila qurgan",
+    "spouse_name": "Turmush o'rtog'i F.I.SH (Majburiy)",
+    "room_and_payment": "Xona va To'lov",
+    "select_room": "Bo'sh xonani tanlang *",
+    "loading": "Yuklanmoqda...",
+    "nights": "Necha kecha? *",
+    "payment_method": "To'lov turi",
+    "pay_cash": "Naqd",
+    "pay_card": "Terminal",
+    "pay_click": "Click / Payme",
+    "pay_transfer": "O'tkazma",
+    "total_sum": "Umumiy hisoblanadigan summa:",
+    "paid_now": "Hozir to'lanayotgan summa (UZS) *",
+    "btn_submit": "Joylashtirish va Saqlash",
+    "success": "Muvaffaqiyatli!",
+    "back_to_rooms": "Xaritalarga qaytish",
+    "main_guest_price": "Asosiy mehmon narxi (UZS/kecha)",
+    "passport_photo": "Pasport Rasmi",
+    "optional": "(Majburiy emas)",
+    "upload_or_capture": "Rasmga olish yoki yuklash",
+    "has_zaks": "Zaks guvohnomasi bormi?",
+    "yes_zaks": "Ha, zaks bor",
+    "no_zaks": "Yo'q / Taqdim etilmadi",
+    "zaks_photo": "Zaks Hujjati Rasmi",
+    "family_members": "Oila a'zolari",
+    "members_count": "kishi",
+    "add_member": "Qo'shish",
+    "no_members": "Oila a'zolari yo'q. Agar birga kelgan bo'lsalar, yuqoridagi tugmani bosing.",
+    "member_index": "-a'zo",
+    "calc_guests": "Mehmonlar soni",
+    "calc_nights": "Kunlar soni",
+    "calc_total": "Hisoblangan jami",
+    "calc_list": "A'zolar ro'yxati:",
+    "main_guest": "Asosiy mehmon",
+    "apply_discount": "Kelishilgan (chegirmali) narx qo'llash",
+    "discount_price": "Kelishilgan umumiy narx (UZS)"
+  },
+  "clients": {
+    "title": "Mijozlar Bazasi",
+    "subtitle": "Barcha mijozlar, tarix va qarzdorliklar.",
+    "all_clients": "Barcha mijozlar",
+    "active_clients": "Aktiv (Mehmonxonada)",
+    "dept_clients": "Qarzdorlar",
+    "search_placeholder": "Ism, telefon yoki ID orqali izlash...",
+    "table": {
+      "client": "Mijoz",
+      "contact": "Aloqa",
+      "room": "Xona / Holat",
+      "stay": "Qolish davri",
+      "payment": "To'lov",
+      "actions": "Harakatlar"
+    },
+    "guest_amount": "mehmon",
+    "paid": "To'langan",
+    "debt": "Qarz",
+    "details": "Batafsil"
+  },
+  "finance": {
+    "title": "Moliya",
+    "subtitle": "Kirim, chiqim va umumiy moliyaviy hisobotlar.",
+    "balance": "Umumiy Balans",
+    "income": "Umumiy Kirim",
+    "expense": "Umumiy Chiqim",
+    "add_transaction": "Tranzaksiya qo'shish",
+    "table": {
+      "date": "Sana",
+      "type": "Turi",
+      "category": "Kategoriya",
+      "description": "Izoh",
+      "amount": "Summa"
+    }
+  },
+  "staff": {
+    "title": "Xodimlar",
+    "subtitle": "Xodimlarni boshqarish, lavozim va maoshlar.",
+    "total_staff": "Jami xodimlar",
+    "admins": "Adminlar",
+    "reception": "Qabulxona",
+    "cleaners": "Farroshlar",
+    "add_staff": "Xodim qo'shish",
+    "role": {
+      "admin": "Admin",
+      "reception": "Reception",
+      "cleaner": "Farrosh",
+      "accountant": "Hisobchi"
+    },
+    "table": {
+      "employee": "Xodim",
+      "contact": "Aloqa",
+      "role": "Lavozim",
+      "salary": "Maosh"
+    }
+  },
+  "reports": {
+    "title": "Hisobotlar",
+    "subtitle": "Mehmonxona faoliyati tahlili va statistikasi.",
+    "period": "Davr",
+    "today": "Bugun",
+    "this_week": "Shu hafta",
+    "this_month": "Shu oy",
+    "this_year": "Shu yil",
+    "total_revenue": "Umumiy tushum",
+    "total_clients": "Mijozlar soni",
+    "avg_occupancy": "O'rtacha bandlik"
+  },
+  "profile": {
+    "title": "Mening profilim",
+    "subtitle": "Shaxsiy ma'lumotlar va xavfsizlik.",
+    "personal_info": "Shaxsiy ma'lumotlar",
+    "fullname": "To'liq ism",
+    "username": "Foydalanuvchi nomi",
+    "role": "Lavozim",
+    "phone": "Telefon",
+    "change_password": "Parolni o'zgartirish",
+    "current_password": "Joriy parol",
+    "new_password": "Yangi parol",
+    "confirm_password": "Yangi parolni tasdiqlang",
+    "update_password": "Parolni yangilash"
+  },
+  "login": {
+    "title": "Sherabod Shifo Maskani",
+    "subtitle": "Tizimga kirish uchun ma'lumotlaringizni kiriting",
+    "username": "Username",
+    "password": "Parol",
+    "btn_login": "Tizimga kirish",
+    "btn_loading": "Kirilmoqda...",
+    "error": "Login xatosi"
+  },
+  "modals": {
+    "room": {
+      "add_title": "Yangi xona qo'shish",
+      "edit_title": "Xonani tahrirlash",
+      "number": "Xona raqami",
+      "floor": "Qavat",
+      "type": "Xona turi",
+      "price": "Narxi (UZS/Kun)",
+      "description": "Tavsif / Imkoniyatlar (ixtiyoriy)"
+    },
+    "room_detail": {
+      "maintenance_mode": "Ushbu xona ta'mirlanmoqda.",
+      "days_left": "kun qoldi",
+      "check_in": "Check-in: ",
+      "check_out": "Check-out: ",
+      "debt": "Qarz: ",
+      "checkout_btn": "Check-out qilish",
+      "clean_btn": "Tozalashni boshlash",
+      "finish_clean_btn": "Tozalashni tugatish",
+      "maintenance_btn": "Ta'mirga berish",
+      "finish_maintenance_btn": "Ta'mirdan chiqarish",
+      "book_btn": "Bu xonaga Check-in qilish",
+      "delete_btn": "Xonani o'chirish"
+    },
+    "staff": {
+      "add_title": "Yangi xodim qo'shish",
+      "edit_title": "Xodim ma'lumotlarini tahrirlash",
+      "fullname": "To'liq ism",
+      "username": "Username (Tizimga kirish uchun)",
+      "password": "Parol",
+      "password_hint": "Bo'sh qoldirilsa o'zgarmaydi",
+      "phone": "Telefon raqam",
+      "role": "Lavozim",
+      "salary": "Oylik maosh (UZS) (ixtiyoriy)"
+    },
+    "transaction": {
+      "title": "Tranzaksiya qo'shish",
+      "type": "Turi",
+      "income": "Kirim",
+      "expense": "Chiqim",
+      "amount": "Summa (UZS)",
+      "category": "Kategoriya",
+      "category_placeholder": "Masalan: Maosh, Oziq-ovqat",
+      "date": "Sana",
+      "description": "Izoh (ixtiyoriy)"
+    },
+    "client": {
+      "title": "Mijoz ma'lumotlari",
+      "pay_debt": "Qarzni to'lash",
+      "payment_amount": "To'lanayotgan summa",
+      "payment_method": "To'lov usuli",
+      "confirm_pay": "To'lovni tasdiqlash",
+      "delete_client": "Mijozni o'chirish"
+    }
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "rooms": "Rooms",
+    "checkIn": "Check In",
+    "clients": "Clients",
+    "finance": "Finance",
+    "staff": "Staff",
+    "reports": "Reports",
+    "logout": "Logout"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "search": "Search...",
+    "status": "Status",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Hotel overview and financial metrics.",
+    "income": "Total Income (Today)",
+    "daily_income": "Daily Revenue",
+    "occupied_rooms": "Occupied Rooms",
+    "occupancy_rate": "occupancy",
+    "check_ins_today": "Check-ins Today",
+    "new_check_ins": "New Arrivals",
+    "check_outs_expected": "Expected Check-outs",
+    "check_outs_today": "Check-outs Today",
+    "revenue_7days": "Revenue (Last 7 Days)",
+    "room_types": "Occupancy by Room Type"
+  },
+  "reception": {
+    "title": "Reception",
+    "subtitle": "Manage room statuses and check in clients."
+  },
+  "roomType": {
+    "ekonom": "Economy",
+    "standartplus": "Standard Plus",
+    "lyuks": "Luxury"
+  },
+  "rooms": {
+    "title": "Rooms Map",
+    "subtitle": "Real-time status of hotel rooms.",
+    "add_room": "Add new room",
+    "status": {
+      "available": "Available",
+      "booked": "Booked",
+      "cleaning": "Cleaning",
+      "maintenance": "Maintenance",
+      "unknown": "Unknown"
+    },
+    "click_finish_clean": "Finish cleaning? (Click)"
+  },
+  "checkin": {
+    "title": "Client Registration",
+    "subtitle": "Enter new client details for check-in.",
+    "personal_info": "Personal Information",
+    "fullname": "Full Name *",
+    "phone": "Phone Number *",
+    "birth_year": "Birth Year *",
+    "country": "Country / Region *",
+    "gender": "Gender",
+    "gender_male": "Male",
+    "gender_female": "Female",
+    "marital_status": "Marital Status",
+    "marital_single": "Single",
+    "marital_married": "Married",
+    "spouse_name": "Spouse's Full Name (Required)",
+    "room_and_payment": "Room & Payment",
+    "select_room": "Select available room *",
+    "loading": "Loading...",
+    "nights": "How many nights? *",
+    "payment_method": "Payment Method",
+    "pay_cash": "Cash",
+    "pay_card": "Card / Terminal",
+    "pay_click": "Click / Payme",
+    "pay_transfer": "Bank Transfer",
+    "total_sum": "Total Amount to Pay:",
+    "paid_now": "Amount paying now (UZS) *",
+    "btn_submit": "Check In & Save",
+    "success": "Successfully registered!",
+    "back_to_rooms": "Back to map",
+    "main_guest_price": "Main guest price (UZS/night)",
+    "passport_photo": "Passport Photo",
+    "optional": "(Optional)",
+    "upload_or_capture": "Upload or capture photo",
+    "has_zaks": "Have marriage certificate?",
+    "yes_zaks": "Yes",
+    "no_zaks": "No / Not provided",
+    "zaks_photo": "Marriage Certificate Photo",
+    "family_members": "Family Members",
+    "members_count": "people",
+    "add_member": "Add Member",
+    "no_members": "No family members. If they are with you, click add above.",
+    "member_index": "Member",
+    "calc_guests": "Number of guests",
+    "calc_nights": "Number of nights",
+    "calc_total": "Calculated total",
+    "calc_list": "Guest list:",
+    "main_guest": "Main guest",
+    "apply_discount": "Apply negotiated (discounted) price",
+    "discount_price": "Negotiated total price (UZS)"
+  },
+  "clients": {
+    "title": "Clients Database",
+    "subtitle": "All clients, history and debts.",
+    "all_clients": "All Clients",
+    "active_clients": "Active (In hotel)",
+    "dept_clients": "Debtors",
+    "search_placeholder": "Search by name, phone or ID...",
+    "table": {
+      "client": "Client",
+      "contact": "Contact",
+      "room": "Room / Status",
+      "stay": "Stay Period",
+      "payment": "Payment",
+      "actions": "Actions"
+    },
+    "guest_amount": "guest",
+    "paid": "Paid",
+    "debt": "Debt",
+    "details": "Details"
+  },
+  "finance": {
+    "title": "Finance",
+    "subtitle": "Income, expenses and financial reports.",
+    "balance": "Total Balance",
+    "income": "Total Income",
+    "expense": "Total Expense",
+    "add_transaction": "Add transaction",
+    "table": {
+      "date": "Date",
+      "type": "Type",
+      "category": "Category",
+      "description": "Description",
+      "amount": "Amount"
+    }
+  },
+  "staff": {
+    "title": "Staff",
+    "subtitle": "Manage employees, roles and salaries.",
+    "total_staff": "Total Staff",
+    "admins": "Admins",
+    "reception": "Reception",
+    "cleaners": "Cleaners",
+    "add_staff": "Add Staff",
+    "role": {
+      "admin": "Admin",
+      "reception": "Reception",
+      "cleaner": "Cleaner",
+      "accountant": "Accountant"
+    },
+    "table": {
+      "employee": "Employee",
+      "contact": "Contact",
+      "role": "Role",
+      "salary": "Salary"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Hotel activity analysis and statistics.",
+    "period": "Period",
+    "today": "Today",
+    "this_week": "This week",
+    "this_month": "This month",
+    "this_year": "This year",
+    "total_revenue": "Total revenue",
+    "total_clients": "Total clients",
+    "avg_occupancy": "Avg. occupancy"
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Personal information and security.",
+    "personal_info": "Personal Information",
+    "fullname": "Full Name",
+    "username": "Username",
+    "role": "Role",
+    "phone": "Phone",
+    "change_password": "Change Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm New Password",
+    "update_password": "Update Password"
+  },
+  "login": {
+    "title": "Sherabod Shifo Maskani",
+    "subtitle": "Enter your credentials to login",
+    "username": "Username",
+    "password": "Password",
+    "btn_login": "Login",
+    "btn_loading": "Logging in...",
+    "error": "Login error"
+  },
+  "modals": {
+    "room": {
+      "add_title": "Add New Room",
+      "edit_title": "Edit Room",
+      "number": "Room Number",
+      "floor": "Floor",
+      "type": "Room Type",
+      "price": "Price (UZS/Night)",
+      "description": "Description / Amenities (optional)"
+    },
+    "room_detail": {
+      "maintenance_mode": "This room is under maintenance.",
+      "days_left": "days left",
+      "check_in": "Check-in: ",
+      "check_out": "Check-out: ",
+      "debt": "Debt: ",
+      "checkout_btn": "Check Out",
+      "clean_btn": "Start Cleaning",
+      "finish_clean_btn": "Finish Cleaning",
+      "maintenance_btn": "Set to Maintenance",
+      "finish_maintenance_btn": "Finish Maintenance",
+      "book_btn": "Check-in to this room",
+      "delete_btn": "Delete Room"
+    },
+    "staff": {
+      "add_title": "Add New Employee",
+      "edit_title": "Edit Employee Info",
+      "fullname": "Full Name",
+      "username": "Username (For login)",
+      "password": "Password",
+      "password_hint": "Leave empty to keep unchanged",
+      "phone": "Phone Number",
+      "role": "Role",
+      "salary": "Monthly Salary (UZS) (optional)"
+    },
+    "transaction": {
+      "title": "Add Transaction",
+      "type": "Type",
+      "income": "Income",
+      "expense": "Expense",
+      "amount": "Amount (UZS)",
+      "category": "Category",
+      "category_placeholder": "E.g., Salary, Food",
+      "date": "Date",
+      "description": "Description (optional)"
+    },
+    "client": {
+      "title": "Client Details",
+      "pay_debt": "Pay Debt",
+      "payment_amount": "Payment Amount",
+      "payment_method": "Payment Method",
+      "confirm_pay": "Confirm Payment",
+      "delete_client": "Delete Client"
+    }
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "nav": {
+    "dashboard": "Главная",
+    "rooms": "Номера",
+    "checkIn": "Регистрация",
+    "clients": "Клиенты",
+    "finance": "Финансы",
+    "staff": "Сотрудники",
+    "reports": "Отчеты",
+    "logout": "Выйти"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "add": "Добавить",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "close": "Закрыть",
+    "search": "Поиск...",
+    "status": "Статус",
+    "actions": "Действия",
+    "yes": "Да",
+    "no": "Нет",
+    "loading": "Загрузка...",
+    "success": "Успешно",
+    "error": "Ошибка"
+  },
+  "dashboard": {
+    "title": "Главная",
+    "subtitle": "Состояние гостиницы и финансовые показатели.",
+    "income": "Общий доход (Сегодня)",
+    "daily_income": "Ежедневная выручка",
+    "occupied_rooms": "Занятые номера",
+    "occupancy_rate": "занятость",
+    "check_ins_today": "Заселения сегодня",
+    "new_check_ins": "Новые заезды",
+    "check_outs_expected": "Ожидаемые выезды",
+    "check_outs_today": "Выезды сегодня",
+    "revenue_7days": "Доход за 7 дней",
+    "room_types": "Занятость по типам номеров"
+  },
+  "reception": {
+    "title": "Ресепшен",
+    "subtitle": "Управление статусом номеров и размещение клиентов."
+  },
+  "roomType": {
+    "ekonom": "Эконом",
+    "standartplus": "Стандарт Плюс",
+    "lyuks": "Люкс"
+  },
+  "rooms": {
+    "title": "Карта Номеров",
+    "subtitle": "Состояние номеров в реальном времени.",
+    "add_room": "Добавить номер",
+    "status": {
+      "available": "Свободен",
+      "booked": "Занят",
+      "cleaning": "Уборка",
+      "maintenance": "Ремонт",
+      "unknown": "Неизвестно"
+    },
+    "click_finish_clean": "Уборка завершена? (Нажмите)"
+  },
+  "checkin": {
+    "title": "Регистрация Клиента",
+    "subtitle": "Введите данные нового клиента для заселения.",
+    "personal_info": "Личные данные",
+    "fullname": "Ф.И.О *",
+    "phone": "Номер телефона *",
+    "birth_year": "Год рождения *",
+    "country": "Страна / Регион *",
+    "gender": "Пол",
+    "gender_male": "Мужской",
+    "gender_female": "Женский",
+    "marital_status": "Семейное положение",
+    "marital_single": "Холост / Не замужем",
+    "marital_married": "В браке",
+    "spouse_name": "Ф.И.О супруга/супруги (Обязательно)",
+    "room_and_payment": "Номер и Оплата",
+    "select_room": "Выберите свободный номер *",
+    "loading": "Загрузка...",
+    "nights": "Сколько ночей? *",
+    "payment_method": "Способ оплаты",
+    "pay_cash": "Наличные",
+    "pay_card": "Терминал",
+    "pay_click": "Click / Payme",
+    "pay_transfer": "Перевод",
+    "total_sum": "Общая сумма к оплате:",
+    "paid_now": "Сумма оплаты сейчас (UZS) *",
+    "btn_submit": "Заселить и Сохранить",
+    "success": "Успешно!",
+    "back_to_rooms": "Вернуться к карте",
+    "main_guest_price": "Цена основного гостя (UZS/ночь)",
+    "passport_photo": "Фото паспорта",
+    "optional": "(Необязательно)",
+    "upload_or_capture": "Сфотографировать или загрузить",
+    "has_zaks": "Есть свидетельство о браке?",
+    "yes_zaks": "Да, есть",
+    "no_zaks": "Нет / Не предоставлено",
+    "zaks_photo": "Фото свидетельства о браке",
+    "family_members": "Члены семьи",
+    "members_count": "чел.",
+    "add_member": "Добавить",
+    "no_members": "Нет членов семьи. Если они с вами, нажмите кнопку выше.",
+    "member_index": "-й член",
+    "calc_guests": "Количество гостей",
+    "calc_nights": "Количество дней",
+    "calc_total": "Рассчитанная сумма",
+    "calc_list": "Список гостей:",
+    "main_guest": "Основной гость",
+    "apply_discount": "Применить договорную (со скидкой) цену",
+    "discount_price": "Договорная общая цена (UZS)"
+  },
+  "clients": {
+    "title": "База Клиентов",
+    "subtitle": "Все клиенты, история и долги.",
+    "all_clients": "Все клиенты",
+    "active_clients": "Активные (В отеле)",
+    "dept_clients": "Должники",
+    "search_placeholder": "Поиск по имени, телефону или ID...",
+    "table": {
+      "client": "Клиент",
+      "contact": "Контакты",
+      "room": "Номер / Статус",
+      "stay": "Период проживания",
+      "payment": "Оплата",
+      "actions": "Действия"
+    },
+    "guest_amount": "гость",
+    "paid": "Оплачено",
+    "debt": "Долг",
+    "details": "Подробности"
+  },
+  "finance": {
+    "title": "Финансы",
+    "subtitle": "Доходы, расходы и общие финансовые отчеты.",
+    "balance": "Общий Баланс",
+    "income": "Общий Доход",
+    "expense": "Общий Расход",
+    "add_transaction": "Добавить транзакцию",
+    "table": {
+      "date": "Дата",
+      "type": "Тип",
+      "category": "Категория",
+      "description": "Описание",
+      "amount": "Сумма"
+    }
+  },
+  "staff": {
+    "title": "Сотрудники",
+    "subtitle": "Управление персоналом, должности и зарплаты.",
+    "total_staff": "Всего сотрудников",
+    "admins": "Админы",
+    "reception": "Ресепшен",
+    "cleaners": "Уборщики",
+    "add_staff": "Добавить сотрудника",
+    "role": {
+      "admin": "Админ",
+      "reception": "Ресепшен",
+      "cleaner": "Уборщик",
+      "accountant": "Бухгалтер"
+    },
+    "table": {
+      "employee": "Сотрудник",
+      "contact": "Контакты",
+      "role": "Должность",
+      "salary": "Зарплата"
+    }
+  },
+  "reports": {
+    "title": "Отчеты",
+    "subtitle": "Анализ деятельности гостиницы и статистика.",
+    "period": "Период",
+    "today": "Сегодня",
+    "this_week": "На этой неделе",
+    "this_month": "В этом месяце",
+    "this_year": "В этом году",
+    "total_revenue": "Общий доход",
+    "total_clients": "Количество клиентов",
+    "avg_occupancy": "Средняя занятость"
+  },
+  "profile": {
+    "title": "Мой профиль",
+    "subtitle": "Личные данные и безопасность.",
+    "personal_info": "Личные данные",
+    "fullname": "Полное имя",
+    "username": "Имя пользователя",
+    "role": "Должность",
+    "phone": "Телефон",
+    "change_password": "Сменить пароль",
+    "current_password": "Текущий пароль",
+    "new_password": "Новый пароль",
+    "confirm_password": "Подтвердите новый пароль",
+    "update_password": "Обновить пароль"
+  },
+  "login": {
+    "title": "Sherabod Shifo Maskani",
+    "subtitle": "Введите данные для входа в систему",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "btn_login": "Войти в систему",
+    "btn_loading": "Вход...",
+    "error": "Ошибка входа"
+  },
+  "modals": {
+    "room": {
+      "add_title": "Добавить новый номер",
+      "edit_title": "Редактировать номер",
+      "number": "Номер комнаты",
+      "floor": "Этаж",
+      "type": "Тип номера",
+      "price": "Цена (UZS/Ночь)",
+      "description": "Описание / Удобства (необязательно)"
+    },
+    "room_detail": {
+      "maintenance_mode": "Этот номер находится в ремонте.",
+      "days_left": "дней осталось",
+      "check_in": "Заезд: ",
+      "check_out": "Выезд: ",
+      "debt": "Долг: ",
+      "checkout_btn": "Сделать выезд (Check-out)",
+      "clean_btn": "Начать уборку",
+      "finish_clean_btn": "Завершить уборку",
+      "maintenance_btn": "Отправить на ремонт",
+      "finish_maintenance_btn": "Завершить ремонт",
+      "book_btn": "Заселить в этот номер",
+      "delete_btn": "Удалить номер"
+    },
+    "staff": {
+      "add_title": "Добавить нового сотрудника",
+      "edit_title": "Редактировать данные сотрудника",
+      "fullname": "Полное имя",
+      "username": "Имя пользователя (для входа)",
+      "password": "Пароль",
+      "password_hint": "Оставьте пустым, если не меняете",
+      "phone": "Номер телефона",
+      "role": "Должность",
+      "salary": "Ежемесячная зарплата (UZS) (необязательно)"
+    },
+    "transaction": {
+      "title": "Добавить транзакцию",
+      "type": "Тип",
+      "income": "Доход",
+      "expense": "Расход",
+      "amount": "Сумма (UZS)",
+      "category": "Категория",
+      "category_placeholder": "Например: Зарплата, Продукты",
+      "date": "Дата",
+      "description": "Описание (необязательно)"
+    },
+    "client": {
+      "title": "Данные клиента",
+      "pay_debt": "Оплатить долг",
+      "payment_amount": "Сумма оплаты",
+      "payment_method": "Способ оплаты",
+      "confirm_pay": "Подтвердить оплату",
+      "delete_client": "Удалить клиента"
+    }
+  }
+}
