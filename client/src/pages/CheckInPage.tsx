@@ -103,7 +103,6 @@ export default function CheckInPage() {
   };
 
   const mainDailyExpenseNum = Number(mainDailyExpense) || 0;
-  const membersTotal = familyMembers.reduce((sum, m) => sum + getMemberPrice(m), 0);
   const mainTotalWithExpense = (effectiveMainPrice + mainDailyExpenseNum) * nights;
   const membersTotalWithExpense = familyMembers.reduce(
     (sum, m) => sum + (getMemberPrice(m) + (m.dailyExpense || 0)) * nights,

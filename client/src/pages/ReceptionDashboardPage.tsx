@@ -9,7 +9,7 @@ import { useReports } from '../hooks/useReports';
 import { useSocketStore } from '../stores/useSocketStore';
 import {
   BedDouble, CheckSquare, Clock, AlertTriangle, UserPlus, ArrowRight,
-  Loader2, Users, Calendar, TrendingUp, Wifi, WifiOff, DollarSign,
+  Loader2, Users, Calendar, Wifi, WifiOff, DollarSign,
   Activity, LogIn, LogOut, Wrench, Sparkles, CheckCircle2,
   Search, Filter, X, ChevronDown, ChevronUp, FileText,
 } from 'lucide-react';

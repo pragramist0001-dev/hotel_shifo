@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCreateRoom, useUpdateRoom } from '../../hooks/useRooms';
-import { Loader2, UploadCloud, Image as ImageIcon, CheckCircle2, Bed, Sparkles, Wrench, X } from 'lucide-react';
+import { Loader2, UploadCloud, CheckCircle2, Bed, Sparkles, Wrench, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import api from '../../lib/api';
 import { useTranslation } from 'react-i18next';

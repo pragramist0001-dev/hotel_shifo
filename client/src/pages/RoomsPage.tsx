@@ -1,4 +1,4 @@
-import { useRooms, useUpdateRoomStatus } from '../hooks/useRooms';
+import { useRooms } from '../hooks/useRooms';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ export default function RoomsPage() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { data: rooms, isLoading, isError } = useRooms();
-  const updateStatus = useUpdateRoomStatus();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<any>(null);
 

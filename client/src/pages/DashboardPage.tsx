@@ -172,7 +172,7 @@ export default function DashboardPage() {
                 <RechartsTooltip 
                   contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '8px' }}
                   itemStyle={{ color: '#e4e4e7' }}
-                  formatter={(value: any, name: any, props: any) => [
+                  formatter={(value: any, _name: any, props: any) => [
                     `${value} ta xona (${props.payload.booked} band)`,
                     props.payload.type
                   ]}

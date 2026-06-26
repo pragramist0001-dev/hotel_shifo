@@ -236,7 +236,7 @@ export default function FinancePage() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: number) => formatMoney(value)}
+                  formatter={(value: any) => formatMoney(value)}
                   contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', borderRadius: '8px', color: '#f4f4f5' }}
                   itemStyle={{ color: '#f4f4f5' }}
                 />

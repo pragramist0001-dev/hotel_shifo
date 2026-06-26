@@ -9,7 +9,7 @@ import api from '../lib/api';
 
 export default function ProfilePage() {
   const { t } = useTranslation();
-  const { user, setAuth } = useAuthStore();
+  const { user } = useAuthStore();
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
     username: user?.username || '',
