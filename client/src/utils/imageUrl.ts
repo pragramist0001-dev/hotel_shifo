@@ -13,7 +13,8 @@ export const getImageUrl = (url: string | null | undefined): string | null => {
   // Local rasm - server base URL qo'shish
   // Vite proxy orqali ham ishlaydi, lekin fallback uchun
   if (url.startsWith('/uploads/')) {
-    return `http://localhost:5000${url}`;
+    const serverUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
+    return `${serverUrl}${url}`;
   }
   
   return url;

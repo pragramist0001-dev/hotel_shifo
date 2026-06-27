@@ -14,7 +14,9 @@ export const useSocketStore = create<SocketState>((set, get) => ({
   connect: (token: string) => {
     if (get().socket?.connected) return;
 
-    const socket = io('http://localhost:5000', {
+    const serverUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
+
+    const socket = io(serverUrl, {
       auth: { token },
     });
 
