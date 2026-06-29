@@ -248,6 +248,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                 />
                 <InfoRow label={t('rooms.type', 'Tur')} value={getRoomTypeLabel(room.type, t)} icon={Bed} />
                 <InfoRow label={t('rooms.floor_short', 'Qavat')} value={`${room.floor}-${t('rooms.floor_short', 'qavat')}`} icon={MapPin} />
+                <InfoRow label="Sig'imi" value={`${room.capacity || 1} kishi`} icon={Users} />
                 {room.amenities?.length > 0 && (
                   <InfoRow
                     label={t('rooms.amenities', 'Qulayliklar')}

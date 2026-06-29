@@ -55,6 +55,7 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
     roomNumber: '',
     type: 'standard',
     floor: '1',
+    capacity: '1',
     pricePerNight: '',
     description: '',
     imageUrl: '',
@@ -70,13 +71,14 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
         roomNumber: editingRoom.roomNumber,
         type: editingRoom.type,
         floor: editingRoom.floor.toString(),
+        capacity: (editingRoom.capacity || 1).toString(),
         pricePerNight: editingRoom.pricePerNight.toString(),
         description: editingRoom.description || '',
         imageUrl: editingRoom.imageUrl || '',
         status: editingRoom.status === 'booked' ? 'available' : (editingRoom.status || 'available'),
       });
     } else {
-      setFormData({ roomNumber: '', type: 'ekonom', floor: '1', pricePerNight: '', description: '', imageUrl: '', status: 'available' });
+      setFormData({ roomNumber: '', type: 'ekonom', floor: '1', capacity: '1', pricePerNight: '', description: '', imageUrl: '', status: 'available' });
     }
     setError('');
     setUploadError('');
@@ -124,6 +126,7 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
       const data = {
         ...formData,
         floor: Number(formData.floor),
+        capacity: Number(formData.capacity),
         pricePerNight: Number(formData.pricePerNight),
       };
       if (editingRoom) {
@@ -150,7 +153,7 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
         <form onSubmit={handleSubmit} className="space-y-5 mt-2">
 
           {/* Xona raqami va qavat */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('rooms.room_number', 'Xona Raqami')} *</Label>
               <Input
@@ -171,6 +174,19 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
                 value={formData.floor}
                 onChange={e => setFormData({ ...formData, floor: e.target.value })}
                 placeholder="Masalan: 1"
+                className="bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-zinc-700 dark:text-zinc-300">Sig'imi (Kishi) *</Label>
+              <Input
+                type="text"
+                inputMode="numeric"
+                required
+                min={1}
+                value={formData.capacity}
+                onChange={e => setFormData({ ...formData, capacity: e.target.value })}
+                placeholder="Masalan: 2"
                 className="bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100"
               />
             </div>

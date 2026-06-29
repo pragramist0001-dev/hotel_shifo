@@ -534,9 +534,26 @@ export default function CheckInPage() {
             </p>
 
             <div className="space-y-1.5 text-sm text-zinc-600 dark:text-zinc-400">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span>{t('checkin.calc_guests')}</span>
-                <span className="font-medium text-zinc-800 dark:text-zinc-200">{numberOfPeople}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`font-medium ${selectedRoom && numberOfPeople > (selectedRoom.capacity || 1) ? 'text-red-500 font-bold' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                    {numberOfPeople}
+                  </span>
+                  {selectedRoom && (
+                    <span className="text-xs">
+                      {numberOfPeople > (selectedRoom.capacity || 1) ? (
+                        <span className="text-red-500 bg-red-50 dark:bg-red-950/30 px-1.5 py-0.5 rounded">
+                          (Sig'imdan {numberOfPeople - (selectedRoom.capacity || 1)} ta ko'p)
+                        </span>
+                      ) : (
+                        <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
+                          ({(selectedRoom.capacity || 1) - numberOfPeople} ta bo'sh joy qoldi)
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="flex justify-between">
                 <span>{t('checkin.calc_nights')}</span>

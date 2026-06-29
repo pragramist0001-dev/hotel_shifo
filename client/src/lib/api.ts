@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '../stores/useAuthStore';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -35,6 +36,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return axios(originalRequest);
       } catch (err) {
+        useAuthStore.getState().logout();
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         window.location.href = '/login';

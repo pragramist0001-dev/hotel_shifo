@@ -14,15 +14,15 @@ export default function FinancePage() {
   const { user } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTx, setEditingTx] = useState<any>(null);
-  
+
   const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
   const [typeFilter, setTypeFilter] = useState('');
-  
+
   const activeDateRange = dateRange.startDate && dateRange.endDate ? dateRange : undefined;
-  
+
   const { data: summary, isLoading: loadingSummary } = useTransactionSummary(activeDateRange);
-  const { data: txData, isLoading: loadingTx } = useTransactions({ 
-    limit: 50, 
+  const { data: txData, isLoading: loadingTx } = useTransactions({
+    limit: 50,
     ...(activeDateRange || {}),
     ...(typeFilter ? { type: typeFilter } : {})
   });
@@ -63,7 +63,7 @@ export default function FinancePage() {
           </p>
         </div>
         {user?.role === 'admin' && (
-          <Button 
+          <Button
             onClick={() => { setEditingTx(null); setIsModalOpen(true); }}
             className="bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 shadow-lg shadow-emerald-600/20"
           >
@@ -81,28 +81,28 @@ export default function FinancePage() {
           <Button size="sm" variant="outline" onClick={() => applyQuickFilter(7)}>{t('reports.this_week', 'Hafta')}</Button>
           <Button size="sm" variant="outline" onClick={() => applyQuickFilter(30)}>{t('reports.this_month', 'Oy')}</Button>
         </div>
-        
+
         <div className="flex items-center gap-2 sm:ml-auto w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 shrink-0">
           <Calendar className="w-4 h-4 text-zinc-400" />
-          <input 
-            type="date" 
-            className="h-9 w-[130px] text-sm px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-900 dark:text-zinc-100" 
-            value={dateRange.startDate} 
+          <input
+            type="date"
+            className="h-9 w-[130px] text-sm px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-900 dark:text-zinc-100"
+            value={dateRange.startDate}
             onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
           />
           <span className="text-zinc-400">-</span>
-          <input 
-            type="date" 
-            className="h-9 w-[130px] text-sm px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-900 dark:text-zinc-100" 
-            value={dateRange.endDate} 
+          <input
+            type="date"
+            className="h-9 w-[130px] text-sm px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-900 dark:text-zinc-100"
+            value={dateRange.endDate}
             onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
           />
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
           <Filter className="w-4 h-4 text-zinc-400" />
-          <select 
-            value={typeFilter} 
+          <select
+            value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
             className="h-9 text-sm px-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-900 dark:text-zinc-100"
           >
@@ -175,7 +175,7 @@ export default function FinancePage() {
                 ) : txData?.transactions?.map((tx: any) => (
                   <tr key={tx._id} className="border-b border-zinc-200 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 transition-colors">
                     <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
-                      {new Date(tx.date).toLocaleDateString()} {new Date(tx.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      {new Date(tx.date).toLocaleDateString()} {new Date(tx.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
                     <td className="px-4 py-3 text-zinc-900 dark:text-zinc-100 font-medium">{tx.description}</td>
                     <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400 capitalize">{tx.paymentMethod}</td>
@@ -187,17 +187,17 @@ export default function FinancePage() {
                     </td>
                     {user?.role === 'admin' && (
                       <td className="px-4 py-3 text-right whitespace-nowrap">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 mr-1"
                           onClick={() => { setEditingTx(tx); setIsModalOpen(true); }}
                         >
                           <Edit2 className="w-4 h-4" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
                           onClick={() => {
                             if (window.confirm(t('common.confirm_delete', "Rostdan ham bu tranzaksiyani o'chirasizmi?"))) {
@@ -235,7 +235,7 @@ export default function FinancePage() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   formatter={(value: any) => formatMoney(value)}
                   contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', borderRadius: '8px', color: '#f4f4f5' }}
                   itemStyle={{ color: '#f4f4f5' }}
