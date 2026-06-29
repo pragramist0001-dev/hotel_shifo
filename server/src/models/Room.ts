@@ -5,6 +5,7 @@ export interface IRoom extends Document {
   roomNumber: string;
   type: 'ekonom' | 'standartplus' | 'lyuks';
   floor: number;
+  capacity: number;
   pricePerNight: number;
   amenities: string[];
   status: 'available' | 'booked' | 'cleaning' | 'maintenance';
@@ -24,6 +25,7 @@ const RoomSchema = new Schema<IRoom>(
       default: 'ekonom',
     },
     floor: { type: Number, required: true, min: 1 },
+    capacity: { type: Number, required: true, min: 1, default: 1 },
     pricePerNight: { type: Number, required: true, min: 0 },
     amenities: [{ type: String, trim: true }],
     status: {

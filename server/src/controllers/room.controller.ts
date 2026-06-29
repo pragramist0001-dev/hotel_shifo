@@ -52,7 +52,7 @@ export const getRoomById = async (req: AuthRequest, res: Response): Promise<void
 
 export const createRoom = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { roomNumber, type, floor, pricePerNight, amenities, description, imageUrl, status } = req.body;
+    const { roomNumber, type, floor, capacity, pricePerNight, amenities, description, imageUrl, status } = req.body;
 
     const existingRoom = await Room.findOne({ roomNumber });
     if (existingRoom) {
@@ -64,6 +64,7 @@ export const createRoom = async (req: AuthRequest, res: Response): Promise<void>
       roomNumber,
       type,
       floor,
+      capacity,
       pricePerNight,
       amenities: amenities || [],
       description,
@@ -89,7 +90,7 @@ export const createRoom = async (req: AuthRequest, res: Response): Promise<void>
 
 export const updateRoom = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { roomNumber, type, floor, pricePerNight, amenities, description, imageUrl, status } = req.body;
+    const { roomNumber, type, floor, capacity, pricePerNight, amenities, description, imageUrl, status } = req.body;
 
     const room = await Room.findById(req.params.id);
     if (!room) {
@@ -116,6 +117,7 @@ export const updateRoom = async (req: AuthRequest, res: Response): Promise<void>
       ...(roomNumber && { roomNumber }),
       ...(type && { type }),
       ...(floor && { floor }),
+      ...(capacity !== undefined && { capacity }),
       ...(pricePerNight !== undefined && { pricePerNight }),
       ...(amenities && { amenities }),
       ...(description !== undefined && { description }),

@@ -47,21 +47,21 @@ const seedData = async () => {
     const existingRooms = await Room.countDocuments();
     if (existingRooms === 0) {
       const rooms = [
-        // 1-qavat: Budget
-        { roomNumber: '101', type: 'budget', floor: 1, pricePerNight: 200000, amenities: ['Wi-Fi', 'TV'], description: 'Oddiy xona' },
-        { roomNumber: '102', type: 'budget', floor: 1, pricePerNight: 200000, amenities: ['Wi-Fi', 'TV'], description: 'Oddiy xona' },
-        { roomNumber: '103', type: 'standard', floor: 1, pricePerNight: 350000, amenities: ['Wi-Fi', 'TV', 'AC'], description: 'Standart xona' },
-        { roomNumber: '104', type: 'standard', floor: 1, pricePerNight: 350000, amenities: ['Wi-Fi', 'TV', 'AC'], description: 'Standart xona' },
-        // 2-qavat: Standard + Family
-        { roomNumber: '201', type: 'standard', floor: 2, pricePerNight: 400000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar'], description: 'Standart xona' },
-        { roomNumber: '202', type: 'standard', floor: 2, pricePerNight: 400000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar'], description: 'Standart xona' },
-        { roomNumber: '203', type: 'family', floor: 2, pricePerNight: 550000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon'], description: 'Oilaviy keng xona' },
-        { roomNumber: '204', type: 'family', floor: 2, pricePerNight: 550000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon'], description: 'Oilaviy keng xona' },
-        // 3-qavat: VIP + Luxury
-        { roomNumber: '301', type: 'vip', floor: 3, pricePerNight: 750000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi'], description: 'VIP xona' },
-        { roomNumber: '302', type: 'vip', floor: 3, pricePerNight: 750000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi'], description: 'VIP xona' },
-        { roomNumber: '303', type: 'luxury', floor: 3, pricePerNight: 1200000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi', 'Sauna', 'Kong\'il ochar xona'], description: 'Hashamatli lyuks xona' },
-        { roomNumber: '304', type: 'luxury', floor: 3, pricePerNight: 1200000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi', 'Sauna', 'Kong\'il ochar xona'], description: 'Hashamatli lyuks xona' },
+        // 1-qavat: Ekonom
+        { roomNumber: '101', type: 'ekonom', floor: 1, pricePerNight: 200000, amenities: ['Wi-Fi', 'TV'], description: 'Oddiy xona' },
+        { roomNumber: '102', type: 'ekonom', floor: 1, pricePerNight: 200000, amenities: ['Wi-Fi', 'TV'], description: 'Oddiy xona' },
+        { roomNumber: '103', type: 'standartplus', floor: 1, pricePerNight: 350000, amenities: ['Wi-Fi', 'TV', 'AC'], description: 'Standart xona' },
+        { roomNumber: '104', type: 'standartplus', floor: 1, pricePerNight: 350000, amenities: ['Wi-Fi', 'TV', 'AC'], description: 'Standart xona' },
+        // 2-qavat: Standart Plus
+        { roomNumber: '201', type: 'standartplus', floor: 2, pricePerNight: 400000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar'], description: 'Standart xona' },
+        { roomNumber: '202', type: 'standartplus', floor: 2, pricePerNight: 400000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar'], description: 'Standart xona' },
+        { roomNumber: '203', type: 'standartplus', floor: 2, pricePerNight: 550000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon'], description: 'Oilaviy keng xona' },
+        { roomNumber: '204', type: 'standartplus', floor: 2, pricePerNight: 550000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon'], description: 'Oilaviy keng xona' },
+        // 3-qavat: Lyuks
+        { roomNumber: '301', type: 'lyuks', floor: 3, pricePerNight: 750000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi'], description: 'VIP xona' },
+        { roomNumber: '302', type: 'lyuks', floor: 3, pricePerNight: 750000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi'], description: 'VIP xona' },
+        { roomNumber: '303', type: 'lyuks', floor: 3, pricePerNight: 1200000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi', 'Sauna', 'Kong\'il ochar xona'], description: 'Hashamatli lyuks xona' },
+        { roomNumber: '304', type: 'lyuks', floor: 3, pricePerNight: 1200000, amenities: ['Wi-Fi', 'TV', 'AC', 'Mini-bar', 'Balkon', 'Jakuzi', 'Sauna', 'Kong\'il ochar xona'], description: 'Hashamatli lyuks xona' },
       ];
 
       await Room.insertMany(rooms);
