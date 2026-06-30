@@ -93,7 +93,7 @@ export default function ClientsPage() {
         b.guestDetails?.fullName?.toLowerCase().includes(q) ||
         b.guestDetails?.phone?.toLowerCase().includes(q) ||
         b.guestDetails?.passportSeries?.toLowerCase().includes(q) ||
-        b.room?.roomNumber?.toLowerCase().includes(q)
+        String(b.room?.roomNumber ?? '').toLowerCase().includes(q)
       );
     }
     return result;

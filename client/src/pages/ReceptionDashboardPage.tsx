@@ -153,7 +153,7 @@ export default function ReceptionDashboardPage() {
       list = list.filter(b =>
         b.guestDetails?.fullName?.toLowerCase().includes(q) ||
         b.guestDetails?.phone?.toLowerCase().includes(q) ||
-        b.room?.roomNumber?.toString().includes(q)
+        String(b.room?.roomNumber ?? '').toLowerCase().includes(q)
       );
     }
 

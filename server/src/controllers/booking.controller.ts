@@ -158,7 +158,11 @@ export const checkOut = async (req: AuthRequest, res: Response): Promise<void> =
 
     // Umumiy narxni qayta hisoblash
     const additionalTotal = booking.additionalCharges.reduce((sum, ch) => sum + ch.amount, 0);
-    booking.totalPrice = (room.pricePerNight * booking.numberOfNights) + overtime.overtimeCharge + additionalTotal;
+    // pricePerPerson mavjud bo'lsa ishlatamiz, aks holda xona narxi
+    const effectivePrice = booking.pricePerPerson ?? room.pricePerNight;
+    const spouseCount = (booking.guestDetails.maritalStatus === 'married' && booking.guestDetails.spouseDetails?.fullName) ? 1 : 0;
+    const numberOfPeople = 1 + spouseCount + (booking.guestDetails.familyMembers?.length || 0);
+    booking.totalPrice = (effectivePrice * numberOfPeople * booking.numberOfNights) + overtime.overtimeCharge + additionalTotal;
 
     // To'lov statusini yangilash
     if (booking.paidAmount >= booking.totalPrice) {
@@ -338,8 +342,12 @@ export const updateBooking = async (req: AuthRequest, res: Response): Promise<vo
       let nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       if (nights < 1) nights = 1;
       booking.numberOfNights = nights;
-      
-      let basePrice = room.pricePerNight * nights;
+
+      // pricePerPerson mavjud bo'lsa ishlatamiz
+      const effectivePrice = booking.pricePerPerson ?? room.pricePerNight;
+      const spouseCount = (booking.guestDetails.maritalStatus === 'married' && booking.guestDetails.spouseDetails?.fullName) ? 1 : 0;
+      const numberOfPeople = 1 + spouseCount + (booking.guestDetails.familyMembers?.length || 0);
+      const basePrice = effectivePrice * numberOfPeople * nights;
       const additionalTotal = booking.additionalCharges.reduce((sum, ch) => sum + ch.amount, 0);
       booking.totalPrice = basePrice + booking.overtimeCharge + additionalTotal;
     }

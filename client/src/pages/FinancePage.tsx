@@ -42,8 +42,8 @@ export default function FinancePage() {
     });
   };
 
-  const formatMoney = (amount: number) => {
-    return amount?.toLocaleString() + ' UZS';
+  const formatMoney = (amount?: number | null) => {
+    return (amount ?? 0).toLocaleString() + ' UZS';
   };
 
   const chartData = [

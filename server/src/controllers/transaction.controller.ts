@@ -14,7 +14,11 @@ export const getAllTransactions = async (req: AuthRequest, res: Response): Promi
     if (startDate || endDate) {
       filter.date = {};
       if (startDate) filter.date.$gte = new Date(startDate as string);
-      if (endDate) filter.date.$lte = new Date(endDate as string);
+      if (endDate) {
+        const end = new Date(endDate as string);
+        end.setHours(23, 59, 59, 999);
+        filter.date.$lte = end;
+      }
     }
 
     const skip = (Number(page) - 1) * Number(limit);
@@ -78,7 +82,11 @@ export const getTransactionSummary = async (req: AuthRequest, res: Response): Pr
 
     const dateFilter: any = {};
     if (startDate) dateFilter.$gte = new Date(startDate as string);
-    if (endDate) dateFilter.$lte = new Date(endDate as string);
+    if (endDate) {
+      const end = new Date(endDate as string);
+      end.setHours(23, 59, 59, 999);
+      dateFilter.$lte = end;
+    }
 
     const matchStage: any = {};
     if (Object.keys(dateFilter).length > 0) matchStage.date = dateFilter;

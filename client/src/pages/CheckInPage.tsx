@@ -103,16 +103,16 @@ export default function CheckInPage() {
   };
 
   const mainDailyExpenseNum = Number(mainDailyExpense) || 0;
-  const mainTotalWithExpense = (effectiveMainPrice + mainDailyExpenseNum) * nights;
+  const mainTotalWithExpense = Math.max(0, (effectiveMainPrice - mainDailyExpenseNum)) * nights;
   const membersTotalWithExpense = familyMembers.reduce(
-    (sum, m) => sum + (getMemberPrice(m) + (m.dailyExpense || 0)) * nights,
+    (sum, m) => sum + Math.max(0, (getMemberPrice(m) - (m.dailyExpense || 0))) * nights,
     0
   );
   const calculatedTotal = mainTotalWithExpense + membersTotalWithExpense;
 
-  // Faqat chiqim summasi
-  const totalExpenses = (mainDailyExpenseNum * nights) +
-    familyMembers.reduce((sum, m) => sum + (m.dailyExpense || 0) * nights, 0);
+  // Faqat chiqim summasi (narxdan oshmasin)
+  const totalExpenses = (Math.min(mainDailyExpenseNum, effectiveMainPrice) * nights) +
+    familyMembers.reduce((sum, m) => sum + Math.min(m.dailyExpense || 0, getMemberPrice(m)) * nights, 0);
 
   const totalPrice = useNegotiated && negotiatedPrice
     ? Number(negotiatedPrice)
@@ -577,7 +577,7 @@ export default function CheckInPage() {
                 {mainDailyExpenseNum > 0 && (
                   <div className="flex justify-between py-0.5 pl-3 text-orange-500 dark:text-orange-400">
                     <span>↳ {t('checkin.daily_expense', 'Kunlik chiqim').split('(')[0]} × {nights} {t('checkin.nights', 'kun').replace('*', '').replace('?', '').trim()}</span>
-                    <span className="font-medium">{(mainDailyExpenseNum * nights).toLocaleString()} UZS</span>
+                    <span className="font-medium">- {(mainDailyExpenseNum * nights).toLocaleString()} UZS</span>
                   </div>
                 )}
                 {familyMembers.map((m, i) => (
@@ -589,7 +589,7 @@ export default function CheckInPage() {
                     {(m.dailyExpense || 0) > 0 && (
                       <div className="flex justify-between py-0.5 pl-3 text-orange-500 dark:text-orange-400">
                         <span>↳ {t('checkin.daily_expense', 'Kunlik chiqim').split('(')[0]} × {nights} {t('checkin.nights', 'kun').replace('*', '').replace('?', '').trim()}</span>
-                        <span className="font-medium">{((m.dailyExpense || 0) * nights).toLocaleString()} UZS</span>
+                        <span className="font-medium">- {((m.dailyExpense || 0) * nights).toLocaleString()} UZS</span>
                       </div>
                     )}
                   </React.Fragment>
@@ -603,7 +603,7 @@ export default function CheckInPage() {
                   <ShoppingCart className="w-3.5 h-3.5" /> {t('checkin.total_expenses', 'Jami chiqimlar')} ({nights} {t('checkin.nights', 'kun').replace('*', '').replace('?', '').trim()})
                 </span>
                 <span className="font-bold text-orange-600 dark:text-orange-400">
-                  {totalExpenses.toLocaleString()} UZS
+                  - {totalExpenses.toLocaleString()} UZS
                 </span>
               </div>
             )}
