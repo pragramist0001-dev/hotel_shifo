@@ -166,3 +166,14 @@ export const useRemoveMainGuest = () => {
     },
   });
 };
+
+export const useClientBookings = (phone: string) => {
+  return useQuery({
+    queryKey: ['clientBookings', phone],
+    queryFn: async () => {
+      const { data } = await api.get(`/bookings/client/${encodeURIComponent(phone)}`);
+      return data;
+    },
+    enabled: !!phone,
+  });
+};

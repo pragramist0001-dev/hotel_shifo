@@ -314,11 +314,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                     value={booking.guestDetails?.phone}
                     icon={Phone}
                   />
-                  <InfoRow
-                    label={t('checkin.birth_year', "Tug'ilgan yili")}
-                    value={booking.guestDetails?.birthYear}
-                    icon={User}
-                  />
+
                   {booking.guestDetails?.birthDate && (
                     <InfoRow
                       label={t('checkin.birth_date', "Tug'ilgan sana")}
@@ -365,7 +361,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                       {booking.guestDetails?.familyMembers?.map((m: any, i: number) => (
                         <div key={i} className="flex items-center justify-between text-xs bg-zinc-50 dark:bg-zinc-800/50 rounded-lg px-2 py-1.5">
                           <span className="text-zinc-700 dark:text-zinc-300">
-                            {i + 2}. {m.fullName} <span className="text-zinc-400">({m.birthYear})</span>
+                            {i + 2}. {m.fullName}
                           </span>
                           <button
                             onClick={() => {

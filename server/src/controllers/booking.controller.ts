@@ -65,12 +65,30 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
       paidAmount: actualPaid,
       paymentStatus,
       paymentMethod,
-      additionalCharges: [],
+      additionalCharges: [], // Kunlik chiqimlar tranzaksiya bo'lib yoziladi, mijoz hisobiga qo'shilmaydi
       overtimeCharge: 0,
       status: 'active',
       byReceptionist: req.user!._id,
       notes,
     });
+
+    // Kunlik chiqimlarni (Xarajatlarni) tranzaksiya sifatida saqlash
+    const { additionalCharges } = req.body;
+    if (additionalCharges && Array.isArray(additionalCharges)) {
+      for (const charge of additionalCharges) {
+        if (charge.amount > 0) {
+          await Transaction.create({
+            type: 'expense',
+            category: 'daily_expense',
+            amount: charge.amount,
+            description: `Xona ${room.roomNumber} - ${charge.description}`,
+            relatedBooking: booking._id,
+            createdBy: req.user!._id,
+            date: new Date(),
+          });
+        }
+      }
+    }
 
     // Xonani band qilish
     room.status = 'booked';
@@ -748,3 +766,52 @@ export const removeMainGuest = async (req: AuthRequest, res: Response): Promise<
     res.status(500).json({ message: 'Server xatosi.' });
   }
 };
+
+export const getClientBookings = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { phone } = req.params;
+    const bookings = await Booking.find({ 'guestDetails.phone': phone })
+      .populate('room', 'roomNumber type floor pricePerNight')
+      .populate('byReceptionist', 'fullName')
+      .sort({ createdAt: -1 });
+
+    if (!bookings || bookings.length === 0) {
+      res.status(404).json({ message: 'Mijoz topilmadi.' });
+      return;
+    }
+
+    // Eng so'nggi ma'lumotlari
+    const latestBooking = bookings[0];
+    const clientDetails = latestBooking.guestDetails;
+
+    // Statistika hisoblash
+    const totalVisits = bookings.length;
+    const totalSpent = bookings.reduce((sum, b) => sum + b.paidAmount, 0);
+    let totalDebt = 0;
+    bookings.forEach(b => {
+      const debt = b.totalPrice - b.paidAmount;
+      if (debt > 0) totalDebt += debt;
+    });
+
+    const bookingIds = bookings.map(b => b._id);
+    const expenses = await Transaction.find({
+      relatedBooking: { $in: bookingIds },
+      type: 'expense'
+    });
+    const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+    res.json({
+      client: clientDetails,
+      stats: {
+        totalVisits,
+        totalSpent,
+        totalDebt,
+        totalExpense
+      },
+      bookings
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server xatosi.' });
+  }
+};
+

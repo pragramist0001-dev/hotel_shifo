@@ -16,7 +16,7 @@ import { handlePrintReceipt } from '../utils/printReceipt';
 interface FamilyMember {
   historyNumber: string;
   fullName: string;
-  birthYear: number;
+
   birthDate?: string;
   gender: 'male' | 'female';
   relationship?: string;
@@ -32,7 +32,7 @@ export default function CheckInPage() {
     roomId: z.string().min(1, t('checkin.select_room')),
     fullName: z.string().min(3, t('checkin.fullname')),
     phone: z.string().min(9, t('checkin.phone')),
-    birthYear: z.coerce.number().min(1900).max(new Date().getFullYear()),
+
     birthDate: z.string().optional(),
     gender: z.enum(['male', 'female']),
     country: z.string().min(2, t('checkin.country')),
@@ -105,16 +105,16 @@ export default function CheckInPage() {
   };
 
   const mainDailyExpenseNum = Number(mainDailyExpense) || 0;
-  const mainTotalWithExpense = Math.max(0, (effectiveMainPrice - mainDailyExpenseNum)) * nights;
-  const membersTotalWithExpense = familyMembers.reduce(
-    (sum, m) => sum + Math.max(0, (getMemberPrice(m) - (m.dailyExpense || 0))) * nights,
+  const mainTotalPrice = effectiveMainPrice * nights;
+  const membersTotalPrice = familyMembers.reduce(
+    (sum, m) => sum + getMemberPrice(m) * nights,
     0
   );
-  const calculatedTotal = mainTotalWithExpense + membersTotalWithExpense;
+  const calculatedTotal = mainTotalPrice + membersTotalPrice;
 
-  // Faqat chiqim summasi (narxdan oshmasin)
-  const totalExpenses = (Math.min(mainDailyExpenseNum, effectiveMainPrice) * nights) +
-    familyMembers.reduce((sum, m) => sum + Math.min(m.dailyExpense || 0, getMemberPrice(m)) * nights, 0);
+  // Faqat chiqim summasi
+  const totalExpenses = (mainDailyExpenseNum * nights) +
+    familyMembers.reduce((sum, m) => sum + (m.dailyExpense || 0) * nights, 0);
 
   const totalPrice = useNegotiated && negotiatedPrice
     ? Number(negotiatedPrice)
@@ -123,7 +123,7 @@ export default function CheckInPage() {
   // === Oila a'zolarini boshqarish ===
   const addFamilyMember = () => {
     setFamilyMembers([...familyMembers, {
-      historyNumber: '', fullName: '', birthYear: 2000, birthDate: '', gender: 'male',
+      historyNumber: '', fullName: '', birthDate: '', gender: 'male',
       relationship: '', customPrice: effectiveMainPrice, passportSeries: '', dailyExpense: 0
     }]);
   };
@@ -136,8 +136,9 @@ export default function CheckInPage() {
     const updated = [...familyMembers];
     (updated[index] as any)[field] = value;
 
-    if (field === 'birthYear') {
-      const age = new Date().getFullYear() - Number(value);
+    if (field === 'birthDate') {
+      const birthYear = new Date(value).getFullYear();
+      const age = new Date().getFullYear() - birthYear;
       if (age <= 3) updated[index].customPrice = 0;
       else if (age >= 4 && age <= 13) updated[index].customPrice = 140000;
       else updated[index].customPrice = effectiveMainPrice;
@@ -172,7 +173,6 @@ export default function CheckInPage() {
         historyNumber: data.historyNumber,
         fullName: data.fullName,
         phone: data.phone,
-        birthYear: data.birthYear,
         birthDate: data.birthDate || undefined,
         gender: data.gender,
         country: data.country,
@@ -181,7 +181,6 @@ export default function CheckInPage() {
         familyMembers: familyMembers.length > 0 ? familyMembers.map(m => ({
           historyNumber: m.historyNumber,
           fullName: m.fullName,
-          birthYear: m.birthYear,
           birthDate: m.birthDate || undefined,
           gender: m.gender,
           relationship: m.relationship,
@@ -271,11 +270,7 @@ export default function CheckInPage() {
               {errors.phone && <p className="text-xs text-red-500">{String(errors.phone.message)}</p>}
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_year')}</Label>
-              <Input type="text" inputMode="numeric" {...register('birthYear')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="Masalan: 1990" />
-              {errors.birthYear && <p className="text-xs text-red-500">{String(errors.birthYear.message)}</p>}
-            </div>
+
 
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
@@ -418,19 +413,7 @@ export default function CheckInPage() {
                         className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.birth_year').replace('*', '')}</Label>
-                      <Input
-                        type="text"
-                        inputMode="numeric"
-                        value={member.birthYear}
-                        onChange={(e) => updateFamilyMember(index, 'birthYear', Number(e.target.value))}
-                        placeholder="Masalan: 2000"
-                        min={1900}
-                        max={new Date().getFullYear()}
-                        className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"
-                      />
-                    </div>
+
                     <div className="space-y-1">
                       <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
                       <Input
@@ -596,19 +579,19 @@ export default function CheckInPage() {
                 {mainDailyExpenseNum > 0 && (
                   <div className="flex justify-between py-0.5 pl-3 text-orange-500 dark:text-orange-400">
                     <span>↳ {t('checkin.daily_expense', 'Kunlik chiqim').split('(')[0]} × {nights} {t('checkin.nights', 'kun').replace('*', '').replace('?', '').trim()}</span>
-                    <span className="font-medium">- {(mainDailyExpenseNum * nights).toLocaleString()} UZS</span>
+                    <span className="font-medium">{(mainDailyExpenseNum * nights).toLocaleString()} UZS</span>
                   </div>
                 )}
                 {familyMembers.map((m, i) => (
                   <React.Fragment key={i}>
                     <div className="flex justify-between py-0.5">
-                      <span>{i + 2}. {m.fullName || <span className="italic text-zinc-400">{t('checkin.companion', 'Hamroh')} {i + 1}</span>} ({m.birthYear})</span>
+                      <span>{i + 2}. {m.fullName || <span className="italic text-zinc-400">{t('checkin.companion', 'Hamroh')} {i + 1}</span>}</span>
                       <span className="font-medium">{getMemberPrice(m).toLocaleString()} UZS/kun</span>
                     </div>
                     {(m.dailyExpense || 0) > 0 && (
                       <div className="flex justify-between py-0.5 pl-3 text-orange-500 dark:text-orange-400">
                         <span>↳ {t('checkin.daily_expense', 'Kunlik chiqim').split('(')[0]} × {nights} {t('checkin.nights', 'kun').replace('*', '').replace('?', '').trim()}</span>
-                        <span className="font-medium">- {((m.dailyExpense || 0) * nights).toLocaleString()} UZS</span>
+                        <span className="font-medium">{((m.dailyExpense || 0) * nights).toLocaleString()} UZS</span>
                       </div>
                     )}
                   </React.Fragment>

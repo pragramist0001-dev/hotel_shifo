@@ -3,7 +3,56 @@ import Report from '../models/Report';
 import Transaction from '../models/Transaction';
 import Booking from '../models/Booking';
 import { AuthRequest } from '../middleware/auth.middleware';
-import User from '../models/User';
+
+const calculateStats = async (type: string, userId: string) => {
+  const start = new Date();
+  const end = new Date();
+  start.setHours(0, 0, 0, 0);
+  end.setHours(23, 59, 59, 999);
+
+  if (type === 'weekly') {
+    const day = start.getDay();
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+    start.setDate(diff);
+  } else if (type === 'monthly') {
+    start.setDate(1);
+  }
+
+  const incomeTransactions = await Transaction.find({
+    createdBy: userId,
+    type: 'income',
+    date: { $gte: start, $lte: end }
+  });
+
+  const expenseTransactions = await Transaction.find({
+    createdBy: userId,
+    type: 'expense',
+    date: { $gte: start, $lte: end }
+  });
+  
+  const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
+  const cashIncome = incomeTransactions.filter(t => t.paymentMethod === 'cash').reduce((sum, t) => sum + t.amount, 0);
+  const terminalIncome = incomeTransactions.filter(t => t.paymentMethod === 'terminal').reduce((sum, t) => sum + t.amount, 0);
+  const clickIncome = incomeTransactions.filter(t => t.paymentMethod === 'click').reduce((sum, t) => sum + t.amount, 0);
+  const transferIncome = incomeTransactions.filter(t => t.paymentMethod === 'transfer').reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
+
+  const bookings = await Booking.find({
+    byReceptionist: userId,
+    createdAt: { $gte: start, $lte: end }
+  });
+  
+  const totalBookings = bookings.length;
+  let totalGuests = 0;
+  bookings.forEach(b => {
+    totalGuests += 1;
+    if (b.guestDetails.spouseDetails?.fullName) totalGuests += 1;
+    if (b.guestDetails.familyMembers) totalGuests += b.guestDetails.familyMembers.length;
+  });
+
+  return { totalGuests, totalBookings, totalIncome, cashIncome, terminalIncome, clickIncome, transferIncome, totalExpense };
+};
 
 export const createReport = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -14,44 +63,14 @@ export const createReport = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    const start = new Date();
-    const end = new Date();
-    start.setHours(0, 0, 0, 0);
-    end.setHours(23, 59, 59, 999);
-
-    if (type === 'weekly') {
-      const day = start.getDay();
-      const diff = start.getDate() - day + (day === 0 ? -6 : 1);
-      start.setDate(diff);
-    } else if (type === 'monthly') {
-      start.setDate(1);
-    }
-
-    const transactions = await Transaction.find({
-      createdBy: req.user!._id,
-      type: 'income',
-      date: { $gte: start, $lte: end }
-    });
-    const totalIncome = transactions.reduce((sum, t) => sum + t.amount, 0);
-
-    const bookings = await Booking.find({
-      byReceptionist: req.user!._id,
-      createdAt: { $gte: start, $lte: end }
-    });
-    
-    let totalGuests = 0;
-    bookings.forEach(b => {
-      totalGuests += 1;
-      if (b.guestDetails.spouseDetails?.fullName) totalGuests += 1;
-      if (b.guestDetails.familyMembers) totalGuests += b.guestDetails.familyMembers.length;
-    });
+    const stats = await calculateStats(type, req.user!._id.toString());
 
     const report = await Report.create({
       author: req.user!._id,
       type,
       content,
       status: 'submitted',
-      stats: { totalGuests, totalIncome }
+      stats
     });
 
     const populatedReport = await Report.findById(report._id).populate('author', 'fullName username role');
@@ -78,39 +97,8 @@ export const getReportStats = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    const start = new Date();
-    const end = new Date();
-    start.setHours(0, 0, 0, 0);
-    end.setHours(23, 59, 59, 999);
-
-    if (type === 'weekly') {
-      const day = start.getDay();
-      const diff = start.getDate() - day + (day === 0 ? -6 : 1);
-      start.setDate(diff);
-    } else if (type === 'monthly') {
-      start.setDate(1);
-    }
-
-    const transactions = await Transaction.find({
-      createdBy: req.user!._id,
-      type: 'income',
-      date: { $gte: start, $lte: end }
-    });
-    const totalIncome = transactions.reduce((sum, t) => sum + t.amount, 0);
-
-    const bookings = await Booking.find({
-      byReceptionist: req.user!._id,
-      createdAt: { $gte: start, $lte: end }
-    });
-    
-    let totalGuests = 0;
-    bookings.forEach(b => {
-      totalGuests += 1;
-      if (b.guestDetails.spouseDetails?.fullName) totalGuests += 1;
-      if (b.guestDetails.familyMembers) totalGuests += b.guestDetails.familyMembers.length;
-    });
-
-    res.json({ stats: { totalGuests, totalIncome } });
+    const stats = await calculateStats(type as string, req.user!._id.toString());
+    res.json({ stats });
   } catch (error) {
     console.error('Statistika olish xatosi:', error);
     res.status(500).json({ message: 'Server xatosi' });
@@ -205,39 +193,8 @@ export const updateReport = async (req: AuthRequest, res: Response): Promise<voi
     report.content = content || report.content;
 
     if (type) {
-      const start = new Date();
-      const end = new Date();
-      start.setHours(0, 0, 0, 0);
-      end.setHours(23, 59, 59, 999);
-
-      if (type === 'weekly') {
-        const day = start.getDay();
-        const diff = start.getDate() - day + (day === 0 ? -6 : 1);
-        start.setDate(diff);
-      } else if (type === 'monthly') {
-        start.setDate(1);
-      }
-
-      const transactions = await Transaction.find({
-        createdBy: report.author,
-        type: 'income',
-        date: { $gte: start, $lte: end }
-      });
-      const totalIncome = transactions.reduce((sum, t) => sum + t.amount, 0);
-
-      const bookings = await Booking.find({
-        byReceptionist: report.author,
-        createdAt: { $gte: start, $lte: end }
-      });
-      
-      let totalGuests = 0;
-      bookings.forEach(b => {
-        totalGuests += 1;
-        if (b.guestDetails.spouseDetails?.fullName) totalGuests += 1;
-        if (b.guestDetails.familyMembers) totalGuests += b.guestDetails.familyMembers.length;
-      });
-
-      report.stats = { totalGuests, totalIncome };
+      const stats = await calculateStats(type, report.author.toString());
+      report.stats = stats;
     }
 
     await report.save();

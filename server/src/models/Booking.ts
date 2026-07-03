@@ -10,7 +10,7 @@ export interface ISpouseDetails {
 export interface IFamilyMember {
   historyNumber?: string;
   fullName: string;
-  birthYear: number;
+  birthYear?: number;
   birthDate?: Date;
   gender: 'male' | 'female';
   relationship?: string;
@@ -21,7 +21,7 @@ export interface IGuestDetails {
   historyNumber: string;
   fullName: string;
   phone: string;
-  birthYear: number;
+  birthYear?: number;
   birthDate?: Date;
   gender: 'male' | 'female';
   country: string;
@@ -72,7 +72,7 @@ const SpouseDetailsSchema = new Schema<ISpouseDetails>({
 const FamilyMemberSchema = new Schema<IFamilyMember>({
   historyNumber: { type: String },
   fullName: { type: String, required: true },
-  birthYear: { type: Number, required: true },
+  birthYear: { type: Number },
   birthDate: { type: Date },
   gender: { type: String, enum: ['male', 'female'], required: true },
   relationship: { type: String },
@@ -86,7 +86,7 @@ const BookingSchema = new Schema<IBooking>(
       historyNumber: { type: String },
       fullName: { type: String, required: true, trim: true },
       phone: { type: String, required: true, trim: true },
-      birthYear: { type: Number, required: true },
+      birthYear: { type: Number },
       birthDate: { type: Date },
       gender: { type: String, enum: ['male', 'female'], required: true },
       country: { type: String, required: true, trim: true },

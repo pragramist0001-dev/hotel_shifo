@@ -12,6 +12,7 @@ import DashboardPage from './pages/DashboardPage';
 import RoomsPage from './pages/RoomsPage';
 import CheckInPage from './pages/CheckInPage';
 import ClientsPage from './pages/ClientsPage';
+import ClientProfilePage from './pages/ClientProfilePage';
 import FinancePage from './pages/FinancePage';
 import StaffPage from './pages/StaffPage';
 import ProfilePage from './pages/ProfilePage';
@@ -65,6 +66,7 @@ function App() {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="clients" element={<ClientsPage />} />
+          <Route path="clients/profile/:phone" element={<ClientProfilePage />} />
 
           {/* Admin only */}
           <Route path="finance" element={

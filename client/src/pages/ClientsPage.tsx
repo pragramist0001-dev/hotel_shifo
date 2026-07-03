@@ -68,7 +68,6 @@ export default function ClientsPage() {
     phone: '',
     historyNumber: '',
     passportSeries: '',
-    birthYear: '',
     birthDate: '',
     country: '',
   });
@@ -135,7 +134,6 @@ export default function ClientsPage() {
       phone: booking.guestDetails.phone || '',
       historyNumber: booking.guestDetails.historyNumber || '',
       passportSeries: booking.guestDetails.passportSeries || '',
-      birthYear: booking.guestDetails.birthYear?.toString() || '',
       birthDate: booking.guestDetails.birthDate ? new Date(booking.guestDetails.birthDate).toISOString().split('T')[0] : '',
       country: booking.guestDetails.country || '',
     });
@@ -182,7 +180,6 @@ export default function ClientsPage() {
         data: { 
           guestDetails: {
             ...editGuestData,
-            birthYear: editGuestData.birthYear ? Number(editGuestData.birthYear) : undefined,
             birthDate: editGuestData.birthDate ? new Date(editGuestData.birthDate) : undefined,
           }
         } 
@@ -380,7 +377,9 @@ export default function ClientsPage() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-semibold text-zinc-900 dark:text-zinc-100">{booking.guestDetails.fullName}</p>
+                        <a href={`/clients/profile/${encodeURIComponent(booking.guestDetails.phone)}`} className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+                          {booking.guestDetails.fullName}
+                        </a>
                         <p className="text-xs text-zinc-400 mt-0.5">{booking.guestDetails.phone}</p>
                         {familyCount > 1 && (
                           <span className="text-xs text-blue-500 bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 rounded-full inline-block mt-1">
@@ -688,15 +687,7 @@ export default function ClientsPage() {
                 className="bg-zinc-50 dark:bg-zinc-900"
               />
             </div>
-            <div className="space-y-2 col-span-2 md:col-span-1">
-              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_year').replace('*', '')}</Label>
-              <Input
-                type="number"
-                value={editGuestData.birthYear}
-                onChange={e => setEditGuestData(prev => ({...prev, birthYear: e.target.value}))}
-                className="bg-zinc-50 dark:bg-zinc-900"
-              />
-            </div>
+
             <div className="space-y-2 col-span-2 md:col-span-1">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
               <Input

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { checkIn, checkOut, getAllBookings, getActiveBookings, getBookingById, addPayment, updateBooking, deleteBooking, freezeBooking, resumeBooking, removeFamilyMember, removeSpouse, removeMainGuest } from '../controllers/booking.controller';
+import { checkIn, checkOut, getAllBookings, getActiveBookings, getBookingById, addPayment, updateBooking, deleteBooking, freezeBooking, resumeBooking, removeFamilyMember, removeSpouse, removeMainGuest, getClientBookings } from '../controllers/booking.controller';
 import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -8,6 +8,7 @@ router.use(authenticate);
 
 router.get('/', getAllBookings);
 router.get('/active', getActiveBookings);
+router.get('/client/:phone', getClientBookings);
 router.get('/:id', getBookingById);
 router.post('/check-in', checkIn);
 router.post('/:id/check-out', checkOut);
