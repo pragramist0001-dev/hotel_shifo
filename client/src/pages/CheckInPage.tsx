@@ -17,6 +17,7 @@ interface FamilyMember {
   historyNumber: string;
   fullName: string;
   birthYear: number;
+  birthDate?: string;
   gender: 'male' | 'female';
   relationship?: string;
   customPrice?: number;
@@ -32,6 +33,7 @@ export default function CheckInPage() {
     fullName: z.string().min(3, t('checkin.fullname')),
     phone: z.string().min(9, t('checkin.phone')),
     birthYear: z.coerce.number().min(1900).max(new Date().getFullYear()),
+    birthDate: z.string().optional(),
     gender: z.enum(['male', 'female']),
     country: z.string().min(2, t('checkin.country')),
     maritalStatus: z.enum(['single', 'married']).optional(),
@@ -121,7 +123,7 @@ export default function CheckInPage() {
   // === Oila a'zolarini boshqarish ===
   const addFamilyMember = () => {
     setFamilyMembers([...familyMembers, {
-      historyNumber: '', fullName: '', birthYear: 2000, gender: 'male',
+      historyNumber: '', fullName: '', birthYear: 2000, birthDate: '', gender: 'male',
       relationship: '', customPrice: effectiveMainPrice, passportSeries: '', dailyExpense: 0
     }]);
   };
@@ -171,6 +173,7 @@ export default function CheckInPage() {
         fullName: data.fullName,
         phone: data.phone,
         birthYear: data.birthYear,
+        birthDate: data.birthDate || undefined,
         gender: data.gender,
         country: data.country,
         maritalStatus: 'single',
@@ -179,6 +182,7 @@ export default function CheckInPage() {
           historyNumber: m.historyNumber,
           fullName: m.fullName,
           birthYear: m.birthYear,
+          birthDate: m.birthDate || undefined,
           gender: m.gender,
           relationship: m.relationship,
           passportSeries: m.passportSeries
@@ -271,6 +275,12 @@ export default function CheckInPage() {
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_year')}</Label>
               <Input type="text" inputMode="numeric" {...register('birthYear')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="Masalan: 1990" />
               {errors.birthYear && <p className="text-xs text-red-500">{String(errors.birthYear.message)}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
+              <Input type="date" {...register('birthDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
+              {errors.birthDate && <p className="text-xs text-red-500">{String(errors.birthDate.message)}</p>}
             </div>
 
             <div className="space-y-2">
@@ -418,6 +428,15 @@ export default function CheckInPage() {
                         placeholder="Masalan: 2000"
                         min={1900}
                         max={new Date().getFullYear()}
+                        className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
+                      <Input
+                        type="date"
+                        value={member.birthDate || ''}
+                        onChange={(e) => updateFamilyMember(index, 'birthDate', e.target.value)}
                         className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"
                       />
                     </div>

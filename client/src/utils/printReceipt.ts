@@ -73,7 +73,8 @@ export const generateReceiptHtml = (data: ReceiptData): string => {
   return `
     <div class="receipt-container">
       <div class="header">
-        <h2>Sanatory CRM</h2>
+        <img src="${window.location.origin}/logo.jpg" alt="Logo" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 5px; border-radius: 8px;" />
+        <h2 style="margin-top: 0;">Sanatory CRM</h2>
         <p>To'lov kvitansiyasi</p>
       </div>
 

@@ -69,6 +69,7 @@ export default function ClientsPage() {
     historyNumber: '',
     passportSeries: '',
     birthYear: '',
+    birthDate: '',
     country: '',
   });
 
@@ -135,6 +136,7 @@ export default function ClientsPage() {
       historyNumber: booking.guestDetails.historyNumber || '',
       passportSeries: booking.guestDetails.passportSeries || '',
       birthYear: booking.guestDetails.birthYear?.toString() || '',
+      birthDate: booking.guestDetails.birthDate ? new Date(booking.guestDetails.birthDate).toISOString().split('T')[0] : '',
       country: booking.guestDetails.country || '',
     });
     setEditGuestModalOpen(true);
@@ -180,7 +182,8 @@ export default function ClientsPage() {
         data: { 
           guestDetails: {
             ...editGuestData,
-            birthYear: editGuestData.birthYear ? Number(editGuestData.birthYear) : undefined
+            birthYear: editGuestData.birthYear ? Number(editGuestData.birthYear) : undefined,
+            birthDate: editGuestData.birthDate ? new Date(editGuestData.birthDate) : undefined,
           }
         } 
       },
@@ -691,6 +694,15 @@ export default function ClientsPage() {
                 type="number"
                 value={editGuestData.birthYear}
                 onChange={e => setEditGuestData(prev => ({...prev, birthYear: e.target.value}))}
+                className="bg-zinc-50 dark:bg-zinc-900"
+              />
+            </div>
+            <div className="space-y-2 col-span-2 md:col-span-1">
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
+              <Input
+                type="date"
+                value={editGuestData.birthDate}
+                onChange={e => setEditGuestData(prev => ({...prev, birthDate: e.target.value}))}
                 className="bg-zinc-50 dark:bg-zinc-900"
               />
             </div>

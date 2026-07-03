@@ -319,6 +319,13 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                     value={booking.guestDetails?.birthYear}
                     icon={User}
                   />
+                  {booking.guestDetails?.birthDate && (
+                    <InfoRow
+                      label={t('checkin.birth_date', "Tug'ilgan sana")}
+                      value={new Date(booking.guestDetails.birthDate).toLocaleDateString('uz-UZ')}
+                      icon={Calendar}
+                    />
+                  )}
                   <InfoRow
                     label={t('checkin.guests_count', 'Mehmonlar soni')}
                     value={`${familyCount} ${t('checkin.members_count', 'kishi')}`}

@@ -331,6 +331,7 @@ export const updateBooking = async (req: AuthRequest, res: Response): Promise<vo
       if (guestDetails.phone !== undefined) booking.guestDetails.phone = guestDetails.phone;
       if (guestDetails.historyNumber !== undefined) booking.guestDetails.historyNumber = guestDetails.historyNumber;
       if (guestDetails.birthYear !== undefined) booking.guestDetails.birthYear = guestDetails.birthYear;
+      if (guestDetails.birthDate !== undefined) booking.guestDetails.birthDate = guestDetails.birthDate;
       if (guestDetails.country !== undefined) booking.guestDetails.country = guestDetails.country;
       if (guestDetails.passportSeries !== undefined) booking.guestDetails.passportSeries = guestDetails.passportSeries;
     }
@@ -705,6 +706,7 @@ export const removeMainGuest = async (req: AuthRequest, res: Response): Promise<
       const promotedMember = booking.guestDetails.familyMembers![0];
       booking.guestDetails.fullName = promotedMember.fullName;
       booking.guestDetails.birthYear = promotedMember.birthYear;
+      if (promotedMember.birthDate) booking.guestDetails.birthDate = promotedMember.birthDate;
       booking.guestDetails.gender = promotedMember.gender as any;
       if (promotedMember.passportSeries) booking.guestDetails.passportSeries = promotedMember.passportSeries;
       booking.guestDetails.familyMembers!.shift();
@@ -715,6 +717,9 @@ export const removeMainGuest = async (req: AuthRequest, res: Response): Promise<
       booking.guestDetails.fullName = spouseName;
       if ((booking.guestDetails.spouseDetails as any).birthYear) {
         booking.guestDetails.birthYear = (booking.guestDetails.spouseDetails as any).birthYear;
+      }
+      if ((booking.guestDetails.spouseDetails as any).birthDate) {
+        booking.guestDetails.birthDate = (booking.guestDetails.spouseDetails as any).birthDate;
       }
       booking.guestDetails.maritalStatus = 'single';
       booking.guestDetails.spouseDetails = undefined;

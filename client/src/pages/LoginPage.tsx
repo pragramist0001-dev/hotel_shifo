@@ -39,12 +39,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-md relative z-10 border-zinc-200/50 dark:border-zinc-800/50 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl shadow-2xl overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
         <CardHeader className="space-y-3 text-center pb-8 pt-8">
-          <div className="mx-auto w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mb-2 shadow-inner border border-emerald-200 dark:border-emerald-800/50">
-            <HeartPulse className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+          <div className="mx-auto w-32 h-32 rounded-2xl overflow-hidden mb-2 shadow-md border border-zinc-200 dark:border-zinc-800/50 bg-white">
+            <img src="/logo.jpg" alt="Sanatory Logo" className="w-full h-full object-contain" />
           </div>
-          <CardTitle className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-100">
-            {t('login.title')}
-          </CardTitle>
           <CardDescription className="text-zinc-500 dark:text-zinc-400 font-medium">
             {t('login.subtitle')}
           </CardDescription>

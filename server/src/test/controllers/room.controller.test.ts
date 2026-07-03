@@ -43,11 +43,12 @@ describe('Room API', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         roomNumber: '101',
-        type: 'standard',
+        type: 'ekonom',
         floor: 1,
         pricePerNight: 100000,
       });
 
+    console.log('CREATE ROOM RES:', res.body);
     expect(res.status).toBe(201);
     expect(res.body.room.roomNumber).toBe('101');
   });
@@ -55,7 +56,7 @@ describe('Room API', () => {
   it('should not allow duplicate room numbers', async () => {
     await Room.create({
       roomNumber: '101',
-      type: 'standard',
+      type: 'ekonom',
       floor: 1,
       pricePerNight: 100000,
     });
@@ -66,7 +67,7 @@ describe('Room API', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         roomNumber: '101',
-        type: 'deluxe',
+        type: 'lyuks',
         floor: 1,
         pricePerNight: 150000,
       });
@@ -78,7 +79,7 @@ describe('Room API', () => {
   it('should not allow deleting a booked room', async () => {
     const room = await Room.create({
       roomNumber: '102',
-      type: 'standard',
+      type: 'ekonom',
       floor: 1,
       pricePerNight: 100000,
       status: 'booked',

@@ -40,7 +40,7 @@ describe('Booking API - Check-in', () => {
   it('should successfully check-in a guest and calculate price', async () => {
     const room = await Room.create({
       roomNumber: '105',
-      type: 'standard',
+      type: 'ekonom',
       floor: 1,
       pricePerNight: 200000,
       status: 'available',
@@ -78,7 +78,7 @@ describe('Booking API - Check-in', () => {
   it('should not allow check-in if room is not available', async () => {
     const room = await Room.create({
       roomNumber: '106',
-      type: 'standard',
+      type: 'ekonom',
       floor: 1,
       pricePerNight: 200000,
       status: 'cleaning',
@@ -107,7 +107,7 @@ describe('Booking API - Check-in', () => {
   it('should require spouse details if married', async () => {
     const room = await Room.create({
       roomNumber: '107',
-      type: 'standard',
+      type: 'ekonom',
       floor: 1,
       pricePerNight: 200000,
     });
