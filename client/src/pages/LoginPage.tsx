@@ -3,10 +3,10 @@ import { useAuthStore } from '../stores/useAuthStore';
 import api from '../lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, User, Lock, HeartPulse } from 'lucide-react';
+import { Eye, EyeOff, User, Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const { t } = useTranslation();

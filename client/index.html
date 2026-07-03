@@ -7,39 +7,41 @@
     <title>Sherabod Shifo Maskani</title>
   </head>
   <body>
-    <div id="root">
-      <style>
-        .app-loader {
-          position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background-color: #f4f4f5;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          z-index: 9999;
-          font-family: system-ui, -apple-system, sans-serif;
-        }
-        @media (prefers-color-scheme: dark) {
-          .app-loader { background-color: #09090b; }
-        }
-        .app-loader img {
-          width: 120px;
-          height: 120px;
-          object-fit: contain;
-          border-radius: 20px;
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(0.95); }
-        }
-      </style>
-      <div class="app-loader">
-        <img src="/logo.jpg" alt="Sherabod Shifo Maskani" />
-      </div>
+    <style>
+      #splash-screen {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #f4f4f5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: system-ui, -apple-system, sans-serif;
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+      }
+      @media (prefers-color-scheme: dark) {
+        #splash-screen { background-color: #09090b; }
+      }
+      #splash-screen img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 16px;
+        animation: pulse-splash 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      }
+      @keyframes pulse-splash {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.95); }
+      }
+      body { margin: 0; overflow: hidden; }
+      body.loaded { overflow: auto; }
+    </style>
+    <div id="splash-screen">
+      <img src="/logo.jpg" alt="Sherabod Shifo Maskani" />
     </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
