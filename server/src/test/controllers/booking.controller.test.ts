@@ -12,6 +12,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await closeDB();
+  app.get('io').close();
   server.close();
 });
 

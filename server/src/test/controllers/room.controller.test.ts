@@ -11,7 +11,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await closeDB();
-  server.close(); // Close socket and http server
+  app.get('io').close();
+  server.close();
 });
 
 afterEach(async () => {

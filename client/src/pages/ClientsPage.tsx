@@ -691,7 +691,8 @@ export default function ClientsPage() {
             <div className="space-y-2 col-span-2 md:col-span-1">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
               <Input
-                type="date"
+                type="text"
+                placeholder="12.05.1990"
                 value={editGuestData.birthDate}
                 onChange={e => setEditGuestData(prev => ({...prev, birthDate: e.target.value}))}
                 className="bg-zinc-50 dark:bg-zinc-900"
