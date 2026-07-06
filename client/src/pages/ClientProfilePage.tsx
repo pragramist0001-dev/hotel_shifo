@@ -7,12 +7,10 @@ import { Loader2, ArrowLeft, User, Phone, MapPin, Calendar, Clock, CreditCard, R
 import { handlePrintReceipt } from '../utils/printReceipt';
 import { printAdminReport } from '../utils/printAdminReport';
 import BookingPaymentModal from '@/components/modals/BookingPaymentModal';
-import { useTranslation } from 'react-i18next';
 
 export default function ClientProfilePage() {
   const { phone } = useParams<{ phone: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const [selectedBookingForPayment, setSelectedBookingForPayment] = useState<any>(null);
   const { mutate: freezeBooking, isPending: isFreezing } = useFreezeBooking();

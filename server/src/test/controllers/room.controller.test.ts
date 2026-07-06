@@ -49,7 +49,7 @@ describe('Room API', () => {
         pricePerNight: 100000,
       });
 
-    console.log('CREATE ROOM RES:', res.body);
+
     expect(res.status).toBe(201);
     expect(res.body.room.roomNumber).toBe('101');
   });
