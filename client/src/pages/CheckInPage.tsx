@@ -39,6 +39,7 @@ export default function CheckInPage() {
     maritalStatus: z.enum(['single', 'married']).optional(),
     historyNumber: z.string().min(1, 'Istoriya raqami majburiy'),
     passportSeries: z.string().optional(),
+    profession: z.string().optional(),
     checkInDate: z.string().min(1, 'Kelish sanasi majburiy'),
     checkOutDate: z.string().min(1, 'Ketish sanasi majburiy'),
     paymentMethod: z.enum(['cash', 'terminal', 'click', 'transfer']),
@@ -176,6 +177,7 @@ export default function CheckInPage() {
         birthDate: data.birthDate || undefined,
         gender: data.gender,
         country: data.country,
+        profession: data.profession,
         maritalStatus: 'single',
         passportSeries: data.passportSeries,
         familyMembers: familyMembers.length > 0 ? familyMembers.map(m => ({
@@ -282,6 +284,12 @@ export default function CheckInPage() {
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.country')}</Label>
               <Input {...register('country')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="O'zbekiston, Toshkent" />
               {errors.country && <p className="text-xs text-red-500">{String(errors.country.message)}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-zinc-700 dark:text-zinc-300">Kasbi (Profession)</Label>
+              <Input {...register('profession')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="O'qituvchi, Shifokor..." />
+              {errors.profession && <p className="text-xs text-red-500">{String(errors.profession.message)}</p>}
             </div>
 
             <div className="space-y-2">
@@ -496,8 +504,9 @@ export default function CheckInPage() {
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 max-h-[300px]">
                   {rooms?.map((room: any) => (
-                    <SelectItem key={room._id} value={room._id}>
-                      {t('modals.room.number').split(' ')[0]} {room.roomNumber} — {t(`roomType.${room.type}`)} ({room.pricePerNight.toLocaleString()} UZS)
+                    <SelectItem key={room._id} value={room._id} className="text-zinc-900 dark:text-zinc-100">
+                      {t('modals.room.number').split(' ')[0]} {room.roomNumber} — {t(`roomType.${room.type}`)} ({room.pricePerNight.toLocaleString()} UZS) 
+                      {room.capacity > 0 && <span className="ml-2 text-emerald-500 font-bold bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded text-xs">({room.capacity - (room.occupiedBeds || 0)} ta bo'sh)</span>}
                     </SelectItem>
                   ))}
                 </SelectContent>

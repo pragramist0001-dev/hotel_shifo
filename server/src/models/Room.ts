@@ -9,7 +9,9 @@ export interface IRoom extends Document {
   pricePerNight: number;
   amenities: string[];
   status: 'available' | 'booked' | 'cleaning' | 'maintenance';
-  currentBooking?: mongoose.Types.ObjectId;
+  currentBooking?: mongoose.Types.ObjectId; // Kept for backwards compatibility
+  currentBookings: mongoose.Types.ObjectId[];
+  occupiedBeds: number;
   description?: string;
   imageUrl?: string;
   createdAt: Date;
@@ -34,6 +36,8 @@ const RoomSchema = new Schema<IRoom>(
       default: 'available',
     },
     currentBooking: { type: Schema.Types.ObjectId, ref: 'Booking', default: null },
+    currentBookings: [{ type: Schema.Types.ObjectId, ref: 'Booking' }],
+    occupiedBeds: { type: Number, default: 0 },
     description: { type: String, trim: true },
     imageUrl: { type: String, default: null },
   },

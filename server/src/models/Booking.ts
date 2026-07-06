@@ -28,6 +28,7 @@ export interface IGuestDetails {
   region?: string;
   passportImage?: string;
   passportSeries?: string;
+  profession?: string;
   maritalStatus: 'single' | 'married';
   spouseDetails?: ISpouseDetails;
   familyMembers?: IFamilyMember[];
@@ -93,6 +94,7 @@ const BookingSchema = new Schema<IBooking>(
       region: { type: String, trim: true },
       passportImage: { type: String },
       passportSeries: { type: String },
+      profession: { type: String, trim: true },
       maritalStatus: { type: String, enum: ['single', 'married'], required: true },
       spouseDetails: SpouseDetailsSchema,
       familyMembers: [FamilyMemberSchema]

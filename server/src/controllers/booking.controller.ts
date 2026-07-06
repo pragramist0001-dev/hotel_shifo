@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Response } from 'express';
 import Booking from '../models/Booking';
 import Room from '../models/Room';
@@ -16,8 +17,17 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
       res.status(404).json({ message: 'Xona topilmadi.' });
       return;
     }
+
+    const spouseCount = (guestDetails.maritalStatus === 'married' && guestDetails.spouseDetails?.fullName) ? 1 : 0;
+    const numberOfPeople = 1 + spouseCount + (guestDetails.familyMembers?.length || 0);
+
     if (room.status !== 'available') {
-      res.status(400).json({ message: `Xona ${room.roomNumber} hozirda ${room.status} holatida. Bo'sh xona tanlang.` });
+      res.status(400).json({ message: `Xona ${room.roomNumber} hozirda ${room.status} holatida. Yoki xona to'lgan.` });
+      return;
+    }
+
+    if (room.capacity - (room.occupiedBeds || 0) < numberOfPeople) {
+      res.status(400).json({ message: `Xonada ${numberOfPeople} kishi uchun joy yetarli emas. Qolgan joy: ${room.capacity - (room.occupiedBeds || 0)} ta.` });
       return;
     }
 
@@ -37,8 +47,6 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
     let calculatedNights = Math.round(diffTime / (1000 * 60 * 60 * 24));
     if (calculatedNights < 1) calculatedNights = 1;
 
-    const spouseCount = (guestDetails.maritalStatus === 'married' && guestDetails.spouseDetails?.fullName) ? 1 : 0;
-    const numberOfPeople = 1 + spouseCount + (guestDetails.familyMembers?.length || 0);
     const basePrice = pricePerPerson ? Number(pricePerPerson) : room.pricePerNight;
     
     let totalPrice = basePrice * numberOfPeople * calculatedNights;
@@ -91,8 +99,16 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
     }
 
     // Xonani band qilish
-    room.status = 'booked';
-    room.currentBooking = booking._id;
+    room.currentBooking = booking._id; // Eski frontend uchun
+    if (!room.currentBookings) room.currentBookings = [];
+    room.currentBookings.push(booking._id as mongoose.Types.ObjectId);
+    room.occupiedBeds = (room.occupiedBeds || 0) + numberOfPeople;
+    
+    if (room.occupiedBeds >= room.capacity) {
+      room.status = 'booked';
+    } else {
+      room.status = 'available';
+    }
     await room.save();
 
     // Kirim tranzaksiyasi
@@ -124,7 +140,7 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
         booking: await booking.populate('room'),
         roomNumber: room.roomNumber,
       });
-      io.emit('room:statusChanged', { roomId: room._id, status: 'booked', roomNumber: room.roomNumber });
+      io.emit('room:statusChanged', { roomId: room._id, status: room.status, roomNumber: room.roomNumber });
       io.emit('dashboard:update', { type: 'checkIn' });
     }
 
@@ -192,9 +208,26 @@ export const checkOut = async (req: AuthRequest, res: Response): Promise<void> =
     booking.status = 'checked_out';
     await booking.save();
 
-    // Xonani tozalanmoqda statusiga o'tkazish
-    room.status = 'cleaning';
-    room.currentBooking = undefined;
+    // Xonadan mehmonni o'chirish
+    if (room.currentBookings) {
+      room.currentBookings = room.currentBookings.filter((id: any) => id.toString() !== booking._id.toString());
+    }
+    room.occupiedBeds = Math.max(0, (room.occupiedBeds || 0) - numberOfPeople);
+    
+    // Eski frontend qismlari uchun
+    room.currentBooking = room.currentBookings && room.currentBookings.length > 0 
+      ? room.currentBookings[0] 
+      : undefined;
+
+    if (room.occupiedBeds === 0) {
+      room.status = 'cleaning';
+    } else {
+      if (room.occupiedBeds >= room.capacity) {
+        room.status = 'booked';
+      } else {
+        room.status = 'available';
+      }
+    }
     await room.save();
 
     // Qo'shimcha to'lov tranzaksiyasi
@@ -222,7 +255,7 @@ export const checkOut = async (req: AuthRequest, res: Response): Promise<void> =
     const io = req.app.get('io');
     if (io) {
       io.emit('booking:checkOut', { bookingId: booking._id, roomNumber: room.roomNumber });
-      io.emit('room:statusChanged', { roomId: room._id, status: 'cleaning', roomNumber: room.roomNumber });
+      io.emit('room:statusChanged', { roomId: room._id, status: room.status, roomNumber: room.roomNumber });
       io.emit('dashboard:update', { type: 'checkOut' });
     }
 

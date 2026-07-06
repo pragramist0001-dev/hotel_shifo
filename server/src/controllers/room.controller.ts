@@ -14,6 +14,7 @@ export const getAllRooms = async (req: AuthRequest, res: Response): Promise<void
 
     const rooms = await Room.find(filter)
       .populate('currentBooking')
+      .populate('currentBookings')
       .sort({ roomNumber: 1 });
 
     res.json({ rooms, total: rooms.length });
@@ -25,12 +26,19 @@ export const getAllRooms = async (req: AuthRequest, res: Response): Promise<void
 
 export const getRoomById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const room = await Room.findById(req.params.id).populate({
-      path: 'currentBooking',
-      populate: [
-        { path: 'byReceptionist', select: 'fullName role' },
-      ],
-    });
+    const room = await Room.findById(req.params.id)
+      .populate({
+        path: 'currentBooking',
+        populate: [
+          { path: 'byReceptionist', select: 'fullName role' },
+        ],
+      })
+      .populate({
+        path: 'currentBookings',
+        populate: [
+          { path: 'byReceptionist', select: 'fullName role' },
+        ],
+      });
 
     if (!room) {
       res.status(404).json({ message: 'Xona topilmadi.' });

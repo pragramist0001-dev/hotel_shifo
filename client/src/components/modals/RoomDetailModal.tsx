@@ -314,6 +314,13 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                     value={booking.guestDetails?.phone}
                     icon={Phone}
                   />
+                  {booking.guestDetails?.profession && (
+                    <InfoRow
+                      label="Kasbi"
+                      value={booking.guestDetails.profession}
+                      icon={User}
+                    />
+                  )}
 
                   {booking.guestDetails?.birthDate && (
                     <InfoRow

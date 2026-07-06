@@ -174,11 +174,21 @@ export default function RoomsPage() {
               {/* Info */}
               <div className="p-4 flex flex-col items-center justify-center flex-1 relative z-10">
                 <span className="text-2xl font-black text-zinc-900 dark:text-zinc-100">{room.roomNumber}</span>
-                <span className={cn("text-[11px] font-semibold mt-1 px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800/80", textColor)}>
-                  {getStatusText(room.status)}
+                <span className={cn("text-[11px] font-semibold mt-1 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-center flex flex-col items-center gap-0.5 leading-none", textColor)}>
+                  <span>{getStatusText(room.status)}</span>
+                  {room.status === 'available' && room.capacity > 0 && (
+                    <span className="text-[9px] opacity-80 font-normal">
+                      Bo'sh joy: {room.capacity - (room.occupiedBeds || 0)} ta
+                    </span>
+                  )}
                 </span>
 
-                {room.status === 'booked' && room.currentBooking && (
+                {room.status === 'booked' && room.currentBookings && room.currentBookings.length > 0 && (
+                  <span className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 truncate max-w-full px-1 text-center">
+                    {room.currentBookings.map((b: any) => b.guestDetails?.fullName?.split(' ')[0]).join(', ')}
+                  </span>
+                )}
+                {room.status === 'booked' && !room.currentBookings && room.currentBooking && (
                   <span className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 truncate max-w-full px-1 text-center">
                     {room.currentBooking.guestDetails?.fullName?.split(' ')[0]}
                   </span>

@@ -1,13 +1,22 @@
 
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useClientBookings } from '../hooks/useBookings';
+import { useClientBookings, useFreezeBooking, useResumeBooking } from '../hooks/useBookings';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, User, Phone, MapPin, Calendar, Clock, CreditCard, Receipt, Users } from 'lucide-react';
+import { Loader2, ArrowLeft, User, Phone, MapPin, Calendar, Clock, CreditCard, Receipt, Users, FileText, Snowflake, Play, CreditCard as PaymentIcon } from 'lucide-react';
 import { handlePrintReceipt } from '../utils/printReceipt';
+import { printAdminReport } from '../utils/printAdminReport';
+import BookingPaymentModal from '@/components/modals/BookingPaymentModal';
+import { useTranslation } from 'react-i18next';
 
 export default function ClientProfilePage() {
   const { phone } = useParams<{ phone: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const [selectedBookingForPayment, setSelectedBookingForPayment] = useState<any>(null);
+  const { mutate: freezeBooking, isPending: isFreezing } = useFreezeBooking();
+  const { mutate: resumeBooking, isPending: isResuming } = useResumeBooking();
 
   const { data, isLoading, error } = useClientBookings(phone || '');
 
@@ -46,6 +55,15 @@ export default function ClientProfilePage() {
             {client.fullName}
           </h2>
           <p className="text-zinc-500 dark:text-zinc-400">Mijoz kabineti</p>
+        </div>
+        <div className="ml-auto">
+          <Button 
+            onClick={() => printAdminReport(client, stats, bookings)}
+            className="bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            Adminga Hisobot
+          </Button>
         </div>
       </div>
 
@@ -211,7 +229,52 @@ export default function ClientProfilePage() {
                   </div>
                 </div>
 
-                <div className="bg-zinc-50 dark:bg-zinc-800/20 px-6 py-3 border-t border-zinc-100 dark:border-zinc-800 text-right">
+                <div className="bg-zinc-50 dark:bg-zinc-800/20 px-6 py-3 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap justify-between items-center gap-4">
+                  <div className="flex gap-2">
+                    {booking.status === 'active' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        onClick={() => {
+                          if(confirm("Tashrifni muzlatasizmi? Muzlatilgan vaqt hisobga olinmaydi.")) {
+                            freezeBooking(booking._id);
+                          }
+                        }}
+                        disabled={isFreezing}
+                      >
+                        <Snowflake className="w-4 h-4 mr-2" />
+                        Muzlatish
+                      </Button>
+                    )}
+                    {booking.status === 'frozen' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        onClick={() => {
+                          if(confirm("Tashrifni qayta faollashtirasizmi?")) {
+                            resumeBooking({ id: booking._id, data: {} });
+                          }
+                        }}
+                        disabled={isResuming}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Faollashtirish
+                      </Button>
+                    )}
+                    {(booking.status === 'active' || booking.status === 'frozen') && booking.totalPrice > booking.paidAmount && (
+                      <Button
+                        size="sm"
+                        className="bg-emerald-600 text-white hover:bg-emerald-700"
+                        onClick={() => setSelectedBookingForPayment(booking)}
+                      >
+                        <PaymentIcon className="w-4 h-4 mr-2" />
+                        To'lov qilish
+                      </Button>
+                    )}
+                  </div>
+
                   <Button
                     variant="outline"
                     size="sm"
@@ -238,6 +301,12 @@ export default function ClientProfilePage() {
           })}
         </div>
       </div>
+
+      <BookingPaymentModal 
+        isOpen={!!selectedBookingForPayment}
+        onClose={() => setSelectedBookingForPayment(null)}
+        booking={selectedBookingForPayment}
+      />
     </div>
   );
 }
