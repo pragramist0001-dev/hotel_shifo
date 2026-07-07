@@ -73,7 +73,7 @@ export default function RoomsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div data-aos="fade-up" className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">{t('rooms.title')}</h2>
@@ -91,7 +91,7 @@ export default function RoomsPage() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-md">
+      <div data-aos="fade-up" data-aos-delay="50" className="flex flex-wrap gap-4 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-md">
         <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500"></div><span className="text-sm text-zinc-600 dark:text-zinc-300">{t('rooms.status.available')}</span></div>
         <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div><span className="text-sm text-zinc-600 dark:text-zinc-300">{t('rooms.status.booked')}</span></div>
         <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-yellow-500"></div><span className="text-sm text-zinc-600 dark:text-zinc-300">{t('rooms.status.cleaning')}</span></div>
@@ -100,7 +100,7 @@ export default function RoomsPage() {
       </div>
 
       {/* Filter paneli */}
-      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-md flex flex-col md:flex-row items-center gap-4">
+      <div data-aos="fade-up" data-aos-delay="50" className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-md flex flex-col md:flex-row items-center gap-4">
         <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
           <Filter className="w-4 h-4" />
           <span className="font-medium">{t('common.filters', 'Filterlar:')}</span>
@@ -137,7 +137,7 @@ export default function RoomsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <div data-aos="fade-up" data-aos-delay="100" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {filteredRooms?.map((room: any) => {
           const statusClass = getStatusColor(room.status);
           const [bgColor, textColor] = statusClass.split(' ');
@@ -178,7 +178,7 @@ export default function RoomsPage() {
                   <span>{getStatusText(room.status)}</span>
                   {room.status === 'available' && room.capacity > 0 && (
                     <span className="text-[9px] opacity-80 font-normal">
-                      Bo'sh joy: {room.capacity - (room.occupiedBeds || 0)} ta
+                      {t('rooms.capacity_left', { count: room.capacity - (room.occupiedBeds || 0) }).replace('{{count}}', String(room.capacity - (room.occupiedBeds || 0)))}
                     </span>
                   )}
                 </span>

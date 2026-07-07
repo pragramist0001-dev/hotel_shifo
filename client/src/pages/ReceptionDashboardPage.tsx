@@ -196,7 +196,7 @@ export default function ReceptionDashboardPage() {
     <div className="space-y-5">
 
       {/* ===== HEADER ===== */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div data-aos="fade-up" className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-100">
@@ -224,7 +224,7 @@ export default function ReceptionDashboardPage() {
       </div>
 
       {/* ===== XONA HOLATLARI ===== */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div data-aos="fade-up" data-aos-delay="50" className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard label={t('rooms.status_available', "Bo'sh")} value={`${available}/${totalRooms}`} sub={`${occupancyRate}% ${t('rooms.booked', 'band')}`} icon={BedDouble} colorClass="bg-emerald-500" onClick={() => navigate('/rooms')} />
         <StatCard label={t('rooms.status_booked', 'Band')} value={booked} sub={`${activeBookings?.length ?? 0} ${t('common.guest', 'mehmon')}`} icon={Users} colorClass="bg-red-500" onClick={() => navigate('/rooms')} />
         <StatCard label={t('rooms.status_cleaning', 'Tozalanmoqda')} value={cleaning} sub={t('reception.checked_out_msg', "Check-out bo'ldi")} icon={Sparkles} colorClass="bg-yellow-500" onClick={() => navigate('/rooms')} />
@@ -232,7 +232,7 @@ export default function ReceptionDashboardPage() {
       </div>
 
       {/* ===== ADMIN STATISTIKA ===== */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div data-aos="fade-up" data-aos-delay="100" className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="rounded-xl border border-emerald-100 dark:border-emerald-900/40 bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950/20 dark:to-zinc-950/60 p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-1">
             <DollarSign className="w-4 h-4 text-emerald-500" />
@@ -274,7 +274,7 @@ export default function ReceptionDashboardPage() {
       </div>
 
       {/* ===== FILTER PANEL ===== */}
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/60 backdrop-blur-md overflow-hidden shadow-sm">
+      <div data-aos="fade-up" data-aos-delay="150" className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/60 backdrop-blur-md overflow-hidden shadow-sm">
 
         {/* Header */}
         <button
@@ -537,7 +537,7 @@ export default function ReceptionDashboardPage() {
 
       {/* ===== 3 USTUNLI JADVAL / WIDGETLAR ===== */}
       {!hasFilter && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div data-aos="fade-up" data-aos-delay="200" className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Bugun check-out */}
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 shadow-sm overflow-hidden">
             <div className="px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2 bg-yellow-50/60 dark:bg-yellow-950/10">

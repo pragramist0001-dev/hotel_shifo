@@ -29,30 +29,30 @@ function ReportModal({ isOpen, onClose, editData }: { isOpen: boolean; onClose: 
 
   useEffect(() => {
     if (isOpen && stats && !editData) {
-      let title = type === 'daily' ? 'KUNLIK HISOBOT' : type === 'weekly' ? 'HAFTALIK HISOBOT' : 'OYLIK HISOBOT';
+      let title = type === 'daily' ? t('reports.template.daily', 'KUNLIK HISOBOT') : type === 'weekly' ? t('reports.template.weekly', 'HAFTALIK HISOBOT') : t('reports.template.monthly', 'OYLIK HISOBOT');
       let dateStr = new Date().toLocaleDateString('uz-UZ');
       
       const text = `📋 ${title} (${dateStr})
 
-👥 Tashriflar va Mijozlar:
-- Jami xizmat ko'rsatilgan mijozlar: ${stats.totalGuests} kishi
-- Jami xona band qilishlar (Bronlar): ${stats.totalBookings} ta
+👥 ${t('reports.template.visits_guests', 'Tashriflar va Mijozlar')}:
+- ${t('reports.template.total_guests_served', "Jami xizmat ko'rsatilgan mijozlar")}: ${stats.totalGuests}
+- ${t('reports.template.total_bookings', 'Jami xona band qilishlar (Bronlar)')}: ${stats.totalBookings}
 
-💰 Moliya va Kirim (Kassaga tushgan pul):
-- 💵 Naqd pul: ${stats.cashIncome?.toLocaleString() || 0} UZS
-- 💳 Terminal: ${stats.terminalIncome?.toLocaleString() || 0} UZS
+💰 ${t('reports.template.finance_income', 'Moliya va Kirim (Kassaga tushgan pul)')}:
+- 💵 ${t('reports.template.cash', 'Naqd pul')}: ${stats.cashIncome?.toLocaleString() || 0} UZS
+- 💳 ${t('reports.template.terminal', 'Terminal')}: ${stats.terminalIncome?.toLocaleString() || 0} UZS
 - 📱 Click/Payme: ${stats.clickIncome?.toLocaleString() || 0} UZS
-- 🏦 Pul ko'chirish: ${stats.transferIncome?.toLocaleString() || 0} UZS
+- 🏦 ${t('reports.template.transfer', "Pul ko'chirish")}: ${stats.transferIncome?.toLocaleString() || 0} UZS
 ----------------------------------------
-🟢 JAMI KIRIM: ${stats.totalIncome.toLocaleString()} UZS
+🟢 ${t('reports.template.total_income', 'JAMI KIRIM')}: ${stats.totalIncome.toLocaleString()} UZS
 
-💸 Chiqimlar (Xarajatlar):
+💸 ${t('reports.template.expenses', 'Chiqimlar (Xarajatlar)')}:
 ----------------------------------------
-🔴 JAMI CHIQIM: ${stats.totalExpense?.toLocaleString() || 0} UZS
+🔴 ${t('reports.template.total_expense', 'JAMI CHIQIM')}: ${stats.totalExpense?.toLocaleString() || 0} UZS
 
-💵 SOF QOLDIQ (Kirim - Chiqim): ${(stats.totalIncome - (stats.totalExpense || 0)).toLocaleString()} UZS
+💵 ${t('reports.template.net_balance', 'SOF QOLDIQ (Kirim - Chiqim)')}: ${(stats.totalIncome - (stats.totalExpense || 0)).toLocaleString()} UZS
 
-📝 Qilingan ishlar yuzasidan izohlar, kamchilik va takliflar:
+📝 ${t('reports.template.comments', 'Qilingan ishlar yuzasidan izohlar, kamchilik va takliflar')}:
 - `;
       setContent(text);
     }
@@ -164,7 +164,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div data-aos="fade-up" className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -190,7 +190,7 @@ export default function ReportsPage() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-md">
+      <div data-aos="fade-up" data-aos-delay="50" className="flex flex-wrap items-center gap-3 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-md">
         <select 
           value={filterType} 
           onChange={e => setFilterType(e.target.value)}
@@ -215,7 +215,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div data-aos="fade-up" data-aos-delay="100" className="space-y-4">
         {isLoading ? (
           <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
         ) : reports?.length === 0 ? (
@@ -301,7 +301,7 @@ export default function ReportsPage() {
                 <div className="flex flex-wrap gap-4 mt-4">
                   <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-800/30">
                     <Users className="w-4 h-4" />
-                    <span className="font-semibold text-sm">{t('reports.guests_count', 'Odamlar soni')}: {report.stats.totalGuests} kishi ({report.stats.totalBookings || 0} ta bron)</span>
+                    <span className="font-semibold text-sm">{t('reports.guests_count', 'Odamlar soni')}: {report.stats.totalGuests} ({report.stats.totalBookings || 0} {t('reports.bookings_count', 'ta bron')})</span>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 rounded-lg border border-blue-100 dark:border-blue-800/30">
                     <CreditCard className="w-4 h-4" />
@@ -310,13 +310,13 @@ export default function ReportsPage() {
                   {(report.stats.totalExpense !== undefined) && (
                     <div className="flex items-center gap-2 px-3 py-2 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-800/30">
                       <CreditCard className="w-4 h-4" />
-                      <span className="font-semibold text-sm">Chiqim: {report.stats.totalExpense.toLocaleString()} UZS</span>
+                      <span className="font-semibold text-sm">{t('finance.expense', 'Chiqim')}: {report.stats.totalExpense.toLocaleString()} UZS</span>
                     </div>
                   )}
                   {(report.stats.totalExpense !== undefined) && (
                     <div className="flex items-center gap-2 px-3 py-2 bg-zinc-100 text-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-200 rounded-lg border border-zinc-200 dark:border-zinc-700/50">
                       <CreditCard className="w-4 h-4" />
-                      <span className="font-semibold text-sm">Sof qoldiq: {(report.stats.totalIncome - report.stats.totalExpense).toLocaleString()} UZS</span>
+                      <span className="font-semibold text-sm">{t('finance.balance', 'Sof qoldiq')}: {(report.stats.totalIncome - report.stats.totalExpense).toLocaleString()} UZS</span>
                     </div>
                   )}
                 </div>

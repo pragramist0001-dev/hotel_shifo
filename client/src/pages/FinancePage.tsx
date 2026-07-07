@@ -52,7 +52,7 @@ export default function FinancePage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div data-aos="fade-up" className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -118,7 +118,7 @@ export default function FinancePage() {
           <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div data-aos="fade-up" data-aos-delay="50" className="grid gap-4 md:grid-cols-3">
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.income', 'Jami Daromad')}</h3>
@@ -153,7 +153,7 @@ export default function FinancePage() {
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div data-aos="fade-up" data-aos-delay="100" className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors md:col-span-2 overflow-hidden flex flex-col">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{t('finance.latest_transactions', "So'nggi Tranzaksiyalar")}</h3>
           <div className="overflow-x-auto w-full">
@@ -219,7 +219,7 @@ export default function FinancePage() {
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors flex flex-col h-96">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{t('finance.income', 'Kirim')} / {t('finance.expense', 'Chiqim')}</h3>
           <div className="flex-1 w-full h-full min-h-0">
-            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+            <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
               <PieChart>
                 <Pie
                   data={chartData}

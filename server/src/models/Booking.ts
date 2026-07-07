@@ -15,6 +15,7 @@ export interface IFamilyMember {
   gender: 'male' | 'female';
   relationship?: string;
   passportSeries?: string;
+  guestImage?: string;
 }
 
 export interface IGuestDetails {
@@ -27,6 +28,7 @@ export interface IGuestDetails {
   country: string;
   region?: string;
   passportImage?: string;
+  guestImage?: string;
   passportSeries?: string;
   profession?: string;
   maritalStatus: 'single' | 'married';
@@ -78,6 +80,7 @@ const FamilyMemberSchema = new Schema<IFamilyMember>({
   gender: { type: String, enum: ['male', 'female'], required: true },
   relationship: { type: String },
   passportSeries: { type: String },
+  guestImage: { type: String },
 });
 
 const BookingSchema = new Schema<IBooking>(
@@ -93,6 +96,7 @@ const BookingSchema = new Schema<IBooking>(
       country: { type: String, required: true, trim: true },
       region: { type: String, trim: true },
       passportImage: { type: String },
+      guestImage: { type: String },
       passportSeries: { type: String },
       profession: { type: String, trim: true },
       maritalStatus: { type: String, enum: ['single', 'married'], required: true },

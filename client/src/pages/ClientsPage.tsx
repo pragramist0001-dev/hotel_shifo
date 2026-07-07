@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Plus, Edit, Trash2, Search, Users, Filter, Snowflake, Play, UserMinus, Printer, UserCog } from 'lucide-react';
+import { Loader2, Plus, Edit, Trash2, Search, Users, Filter, Snowflake, Play, UserMinus, Printer, UserCog, Camera, Image as ImageIcon, X } from 'lucide-react';
+import { getImageUrl } from '../utils/imageUrl';
 
 
 // Move these inside component or use translation functions below
@@ -63,13 +64,21 @@ export default function ClientsPage() {
 
   // Edit Guest Info states
   const [editGuestModalOpen, setEditGuestModalOpen] = useState(false);
-  const [editGuestData, setEditGuestData] = useState({
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [editGuestData, setEditGuestData] = useState<{
+    fullName: string; phone: string; historyNumber: string; passportSeries: string;
+    birthDate: string; country: string; guestImage?: string; guestImageFile?: File | null;
+    guestImagePreview?: string | null;
+  }>({
     fullName: '',
     phone: '',
     historyNumber: '',
     passportSeries: '',
     birthDate: '',
     country: '',
+    guestImage: undefined,
+    guestImageFile: null,
+    guestImagePreview: null,
   });
 
   // === FILTERLAR ===
@@ -136,6 +145,9 @@ export default function ClientsPage() {
       passportSeries: booking.guestDetails.passportSeries || '',
       birthDate: booking.guestDetails.birthDate ? new Date(booking.guestDetails.birthDate).toISOString().split('T')[0] : '',
       country: booking.guestDetails.country || '',
+      guestImage: booking.guestDetails.guestImage,
+      guestImageFile: null,
+      guestImagePreview: booking.guestDetails.guestImage ? getImageUrl(booking.guestDetails.guestImage) : null,
     });
     setEditGuestModalOpen(true);
   };
@@ -172,29 +184,58 @@ export default function ClientsPage() {
     );
   };
 
-  const handleEditGuest = () => {
+  const handleEditGuest = async () => {
     if (!selectedBooking) return;
-    updateMutation.mutate(
-      { 
-        id: selectedBooking._id, 
-        data: { 
-          guestDetails: {
-            ...editGuestData,
-            birthDate: editGuestData.birthDate ? new Date(editGuestData.birthDate) : undefined,
-          }
-        } 
-      },
-      { onSuccess: () => setEditGuestModalOpen(false) }
-    );
+    
+    let finalImageUrl = editGuestData.guestImage;
+
+    try {
+      if (editGuestData.guestImageFile) {
+        setIsUploadingImage(true);
+        const formData = new FormData();
+        formData.append('image', editGuestData.guestImageFile);
+        
+        const token = localStorage.getItem('accessToken');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        
+        const res = await fetch(`${apiUrl}/upload/image`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Rasm yuklashda xatolik');
+        finalImageUrl = data.url;
+      }
+
+      updateMutation.mutate(
+        { 
+          id: selectedBooking._id, 
+          data: { 
+            guestDetails: {
+              ...editGuestData,
+              guestImage: finalImageUrl,
+              birthDate: editGuestData.birthDate ? new Date(editGuestData.birthDate) : undefined,
+            }
+          } 
+        },
+        { onSuccess: () => setEditGuestModalOpen(false) }
+      );
+    } catch (error) {
+      console.error('Edit guest error:', error);
+      alert(t('common.image_upload_error_msg', 'Rasm yuklashda xatolik yuz berdi'));
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleDelete = (id: string, name: string) => {
-    if (!window.confirm(`"${name}" ni o'chirmoqchimisiz?`)) return;
+    if (!window.confirm(t('clients.delete_confirm', { name }))) return;
     deleteMutation.mutate(id);
   };
 
   const handleFreeze = (id: string, name: string) => {
-    if (!window.confirm(`"${name}" ning xonasini bo'shatib, qolgan pulini muzlatib qo'ymoqchimisiz?`)) return;
+    if (!window.confirm(t('clients.freeze_confirm', { name }))) return;
     freezeMutation.mutate(id);
   };
 
@@ -283,7 +324,7 @@ export default function ClientsPage() {
       </div>
 
       {/* Filter paneli */}
-      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-md space-y-3">
+      <div data-aos="fade-up" className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-md space-y-3">
         <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 mb-1">
           <Filter className="w-4 h-4" />
           <span className="font-medium">{t('common.filters', 'Filter va qidiruv')}</span>
@@ -342,7 +383,7 @@ export default function ClientsPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 shadow-sm backdrop-blur-md overflow-hidden">
+      <div data-aos="fade-up" data-aos-delay="100" className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 shadow-sm backdrop-blur-md overflow-hidden">
         <div className="overflow-x-auto w-full">
           <Table>
             <TableHeader>
@@ -436,9 +477,9 @@ export default function ClientsPage() {
                           <button
                             onClick={() => openPaymentModal(booking)}
                             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-800/50 transition-colors"
-                            title="To'lov qo'shish"
+                            title={t('clients.add_payment_tooltip')}
                           >
-                            <Plus className="w-3 h-3" /> To'lov
+                            <Plus className="w-3 h-3" /> {t('finance.payment')}
                           </button>
                         )}
                         {booking.status === 'active' && (
@@ -446,14 +487,14 @@ export default function ClientsPage() {
                             <button
                               onClick={() => openEditGuestModal(booking)}
                               className="p-1.5 rounded-lg text-zinc-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors"
-                              title="Mijozni tahrirlash"
+                              title={t('clients.edit_client_tooltip')}
                             >
                               <UserCog className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => openEditModal(booking)}
                               className="p-1.5 rounded-lg text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors"
-                              title="Sanani uzaytirish"
+                              title={t('clients.extend_date_tooltip')}
                             >
                               <Edit className="w-3.5 h-3.5" />
                             </button>
@@ -471,33 +512,33 @@ export default function ClientsPage() {
                                 date: new Date().toLocaleString('uz-UZ')
                               })}
                               className="p-1.5 rounded-lg text-zinc-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors"
-                              title="Chek chiqarish"
+                              title={t('clients.print_receipt_tooltip')}
                             >
                               <Printer className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleFreeze(booking._id, booking.guestDetails.fullName)}
                               className="p-1.5 rounded-lg text-zinc-500 hover:text-cyan-600 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors"
-                              title="Muzlatish (Vaqtinchalik ketish)"
+                              title={t('clients.freeze_tooltip')}
                             >
                               <Snowflake className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => openRemoveFamilyModal(booking)}
                               className="p-1.5 rounded-lg text-zinc-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors"
-                              title="Mehmonni chiqarib yuborish"
+                              title={t('clients.remove_guest_tooltip')}
                             >
                               <UserMinus className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => {
-                                if (window.confirm(`"${booking.guestDetails.fullName}" ni checkout qilmoqchimisiz?`)) {
+                                if (window.confirm(t('clients.checkout_confirm', { name: booking.guestDetails.fullName }))) {
                                   checkoutMutation.mutate({ id: booking._id });
                                 }
                               }}
                               disabled={checkoutMutation.isPending}
                               className="p-1.5 rounded-lg text-zinc-500 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors disabled:opacity-50"
-                              title="Check-out (Chiqib ketdi)"
+                              title={t('clients.checkout_tooltip')}
                             >
                               {checkoutMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <span className="text-xs font-bold">CO</span>}
                             </button>
@@ -508,14 +549,14 @@ export default function ClientsPage() {
                             onClick={() => openResumeModal(booking)}
                             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/50 transition-colors"
                           >
-                            <Play className="w-3 h-3" /> Davom etish
+                            <Play className="w-3 h-3" /> {t('common.resume')}
                           </button>
                         )}
                         <button
                           onClick={() => handleDelete(booking._id, booking.guestDetails.fullName)}
                           disabled={deleteMutation.isPending}
                           className="p-1.5 rounded-lg text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 border border-zinc-200 dark:border-zinc-700 transition-colors disabled:opacity-50"
-                          title="O'chirish"
+                          title={t('common.delete_tooltip')}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -579,11 +620,11 @@ export default function ClientsPage() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Mijoz</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.client_label')}</Label>
               <Input disabled value={selectedBooking?.guestDetails.fullName || ''} className="bg-zinc-50 dark:bg-zinc-900" />
             </div>
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Qarz miqdori</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.debt_amount')}</Label>
               <Input
                 disabled
                 value={`${(selectedBooking?.totalPrice - selectedBooking?.paidAmount || 0).toLocaleString()} UZS`}
@@ -591,13 +632,13 @@ export default function ClientsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">To'lanayotgan summa</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.payment_amount')}</Label>
               <Input
                 type="text"
                 inputMode="numeric"
                 value={paymentAmount}
                 onChange={e => setPaymentAmount(Number(e.target.value))}
-                placeholder="Masalan: 500000"
+                placeholder={t('clients.payment_placeholder')}
                 className="bg-zinc-50 dark:bg-zinc-900"
               />
             </div>
@@ -608,10 +649,10 @@ export default function ClientsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-950">
-                  <SelectItem value="cash">Naqd pul</SelectItem>
-                  <SelectItem value="terminal">Terminal</SelectItem>
-                  <SelectItem value="click">Click</SelectItem>
-                  <SelectItem value="transfer">Pul o'tkazma</SelectItem>
+                  <SelectItem value="cash">{t('common.cash')}</SelectItem>
+                  <SelectItem value="terminal">{t('common.terminal')}</SelectItem>
+                  <SelectItem value="click">{t('common.click')}</SelectItem>
+                  <SelectItem value="transfer">{t('common.transfer')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -630,11 +671,11 @@ export default function ClientsPage() {
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900 dark:text-zinc-100">Ketish sanasini uzaytirish</DialogTitle>
+            <DialogTitle className="text-zinc-900 dark:text-zinc-100">{t('clients.extend_date')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Yangi ketish sanasi</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.new_checkout_date')}</Label>
               <Input
                 type="date"
                 value={editCheckOutDate}
@@ -642,7 +683,7 @@ export default function ClientsPage() {
                 className="bg-zinc-50 dark:bg-zinc-900"
               />
               <p className="text-xs text-zinc-400 dark:text-zinc-500">
-                Sanani o'zgartirsangiz jami summa va qarz avtomatik qayta hisoblanadi.
+                {t('clients.extend_date_warning')}
               </p>
             </div>
           </div>
@@ -663,6 +704,47 @@ export default function ClientsPage() {
             <DialogTitle className="text-zinc-900 dark:text-zinc-100">{t('clients.edit_client', 'Mijoz ma\'lumotlarini tahrirlash')}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-4">
+            <div className="col-span-2 flex flex-col items-center mb-2">
+              <div className="w-24 h-24 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 flex flex-col items-center justify-center overflow-hidden relative mb-2">
+                {editGuestData.guestImagePreview ? (
+                  <>
+                    <img src={editGuestData.guestImagePreview} alt="Guest" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setEditGuestData(p => ({...p, guestImageFile: null, guestImagePreview: null, guestImage: undefined}))}
+                      className="absolute top-1 right-1 bg-red-500 text-white p-0.5 rounded-full hover:bg-red-600 transition"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </>
+                ) : (
+                  <div className="text-zinc-400 flex flex-col items-center">
+                    <ImageIcon className="w-6 h-6 mb-1" />
+                    <span className="text-[10px]">{t('common.image')}</span>
+                  </div>
+                )}
+              </div>
+              <Label className="cursor-pointer bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 py-1.5 px-3 rounded-md text-xs font-medium transition flex items-center gap-1.5">
+                <Camera className="w-3 h-3" />
+                {t('common.upload_image')}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const file = e.target.files[0];
+                      setEditGuestData(p => ({
+                        ...p,
+                        guestImageFile: file,
+                        guestImagePreview: URL.createObjectURL(file)
+                      }));
+                    }
+                  }}
+                />
+              </Label>
+            </div>
+
             <div className="space-y-2 col-span-2 md:col-span-1">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.fullname').replace('*', '')}</Label>
               <Input
@@ -707,7 +789,7 @@ export default function ClientsPage() {
               />
             </div>
             <div className="space-y-2 col-span-2 md:col-span-1">
-              <Label className="text-zinc-700 dark:text-zinc-300">Mamlakat</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.country')}</Label>
               <Input
                 value={editGuestData.country}
                 onChange={e => setEditGuestData(prev => ({...prev, country: e.target.value}))}
@@ -717,8 +799,8 @@ export default function ClientsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditGuestModalOpen(false)}>{t('common.cancel')}</Button>
-            <Button onClick={handleEditGuest} disabled={updateMutation.isPending} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-              {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+            <Button onClick={handleEditGuest} disabled={updateMutation.isPending || isUploadingImage} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              {(updateMutation.isPending || isUploadingImage) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               {t('common.save')}
             </Button>
           </DialogFooter>
@@ -729,14 +811,14 @@ export default function ClientsPage() {
       <Dialog open={resumeModalOpen} onOpenChange={setResumeModalOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900 dark:text-zinc-100">Mijozni davom ettirish</DialogTitle>
+            <DialogTitle className="text-zinc-900 dark:text-zinc-100">{t('clients.resume_client')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Yangi Xona</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.new_room')}</Label>
               <Select value={resumeRoomId} onValueChange={setResumeRoomId}>
                 <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-                  <SelectValue placeholder="Xona tanlang..." />
+                  <SelectValue placeholder={t('clients.select_room')} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-950">
                   {availableRooms?.map((r: any) => (
@@ -748,7 +830,7 @@ export default function ClientsPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Yangi ketish sanasi</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.new_checkout_date')}</Label>
               <Input
                 type="date"
                 value={resumeCheckOut}
@@ -772,37 +854,33 @@ export default function ClientsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Remove Family Member Modal */}
+      {/* Remove Family Modal */}
       <Dialog open={removeFamilyModalOpen} onOpenChange={setRemoveFamilyModalOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900 dark:text-zinc-100">Mehmonni chiqarish</DialogTitle>
+            <DialogTitle className="text-zinc-900 dark:text-zinc-100">{t('clients.remove_family_title')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Ushbu mehmon erta chiqib ketsa, uning qolgan barcha kunlari avtomatik qolgan mehmonlarga qo'shiladi va ketish sanasi uzayadi. Agar bu oxirgi mehmon bo'lsa, xona butunlay bo'shatiladi.
-            </p>
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Qaysi mehmon ketyapti?</Label>
-              <Select
-                value={String(familyMemberIndex)}
-                onValueChange={(val) => setFamilyMemberIndex(Number(val))}
-              >
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('clients.remove_family_desc')}</Label>
+              <Select value={familyMemberIndex.toString()} onValueChange={v => setFamilyMemberIndex(Number(v))}>
                 <SelectTrigger className="bg-zinc-50 dark:bg-zinc-900">
-                  <SelectValue placeholder="Mehmonni tanlang..." />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-950">
                   <SelectItem value="-2">
-                    {selectedBooking?.guestDetails.fullName} (Asosiy mehmon)
+                    {selectedBooking?.guestDetails?.fullName} ({t('clients.main_guest')})
                   </SelectItem>
-                  {selectedBooking?.guestDetails.maritalStatus === 'married' && selectedBooking?.guestDetails.spouseDetails?.fullName && (
+                  
+                  {selectedBooking?.guestDetails?.maritalStatus === 'married' && selectedBooking?.guestDetails?.spouseDetails?.fullName && (
                     <SelectItem value="-1">
-                      {selectedBooking.guestDetails.spouseDetails.fullName} (Turmush o'rtog'i)
+                      {selectedBooking.guestDetails.spouseDetails.fullName} ({t('clients.spouse')})
                     </SelectItem>
                   )}
-                  {selectedBooking?.guestDetails.familyMembers?.map((m: any, idx: number) => (
-                    <SelectItem key={idx} value={String(idx)}>
-                      {m.fullName} ({m.relationship || 'Hamroh'})
+                  
+                  {selectedBooking?.guestDetails?.familyMembers?.map((member: any, index: number) => (
+                    <SelectItem key={index} value={index.toString()}>
+                      {member.fullName} ({t('clients.family_member')} {index + 1})
                     </SelectItem>
                   ))}
                 </SelectContent>

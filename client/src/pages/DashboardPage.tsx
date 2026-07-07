@@ -52,9 +52,9 @@ export default function DashboardPage() {
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex gap-2 justify-end">
-            <Button size="sm" variant={!dateRange.startDate ? "default" : "outline"} className={!dateRange.startDate ? "bg-emerald-600 hover:bg-emerald-700" : ""} onClick={() => applyQuickFilter(0)}>Bugun</Button>
-            <Button size="sm" variant="outline" onClick={() => applyQuickFilter(7)}>Hafta</Button>
-            <Button size="sm" variant="outline" onClick={() => applyQuickFilter(30)}>Oy</Button>
+            <Button size="sm" variant={!dateRange.startDate ? "default" : "outline"} className={!dateRange.startDate ? "bg-emerald-600 hover:bg-emerald-700" : ""} onClick={() => applyQuickFilter(0)}>{t('common.today')}</Button>
+            <Button size="sm" variant="outline" onClick={() => applyQuickFilter(7)}>{t('common.week')}</Button>
+            <Button size="sm" variant="outline" onClick={() => applyQuickFilter(30)}>{t('common.month')}</Button>
           </div>
           <div className="flex items-center gap-2 bg-white/70 dark:bg-zinc-950/50 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-md">
             <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ export default function DashboardPage() {
         </div>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div data-aos="fade-up" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.income')}</h3>
@@ -113,11 +113,11 @@ export default function DashboardPage() {
         </div>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
+      <div data-aos="fade-up" data-aos-delay="100" className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
         <div className="col-span-3 lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 mb-4">{t('dashboard.revenue_7days')}</h3>
           <div className="flex-1 w-full h-full min-h-0">
-            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+            <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
               <AreaChart data={revenueData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
@@ -141,7 +141,7 @@ export default function DashboardPage() {
         <div className="col-span-3 lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 mb-4">{t('dashboard.room_types')}</h3>
           <div className="flex-1 w-full h-full min-h-0">
-            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+            <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
               <PieChart>
                 <Pie
                   data={occupancyData}
@@ -196,17 +196,17 @@ export default function DashboardPage() {
           <div className="px-6 pt-6 pb-2 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
             <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 flex items-center gap-2">
               <FileText className="w-4 h-4 text-emerald-500" />
-              So'nggi Hisobotlar
+              {t('dashboard.recent_reports')}
             </h3>
             <button onClick={() => navigate('/reports')} className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
-              Barchasi <ArrowRight className="w-3 h-3" />
+              {t('common.all_reports')} <ArrowRight className="w-3 h-3" />
             </button>
           </div>
           <div className="flex-1 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800/50">
             {!reports || reports.length === 0 ? (
               <div className="py-12 flex flex-col items-center justify-center text-zinc-400">
                 <FileText className="w-8 h-8 mb-2 opacity-20" />
-                <span className="text-sm">Hozircha hisobotlar yo'q</span>
+                <span className="text-sm">{t('dashboard.no_reports')}</span>
               </div>
             ) : (
               reports.slice(0, 5).map((r: any) => (
@@ -216,14 +216,14 @@ export default function DashboardPage() {
                       {r.author?.fullName}
                     </span>
                     {r.status === 'submitted' ? (
-                      <span className="text-[10px] font-semibold text-yellow-600 dark:text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 px-1.5 py-0.5 rounded">Kutilayapdi</span>
+                      <span className="text-[10px] font-semibold text-yellow-600 dark:text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 px-1.5 py-0.5 rounded">{t('reports.pending')}</span>
                     ) : (
-                      <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-1.5 py-0.5 rounded">Ko'rdi</span>
+                      <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-1.5 py-0.5 rounded">{t('reports.seen')}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-[10px] px-1.5 py-0.5 rounded border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/50 dark:bg-blue-900/20 dark:text-blue-400 font-bold uppercase">
-                      {r.type === 'daily' ? 'Kunlik' : r.type === 'weekly' ? 'Haftalik' : 'Oylik'}
+                      {r.type === 'daily' ? t('reports.daily') : r.type === 'weekly' ? t('reports.weekly') : t('reports.monthly')}
                     </span>
                     <span className="text-[10px] text-zinc-400">
                       {new Date(r.createdAt).toLocaleDateString('uz-UZ')}

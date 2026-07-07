@@ -187,7 +187,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
             <div>
               <p className="text-4xl font-black text-zinc-900 dark:text-zinc-100">#{room?.roomNumber ?? '—'}</p>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {room ? `${getRoomTypeLabel(room.type, t)} • ${room.floor}-${t('rooms.floor_short', 'qavat')}` : ''}
+                {room ? `${getRoomTypeLabel(room.type, t)} • ${room.floor}-{t('rooms.floor_short', 'qavat')}` : ''}
               </p>
             </div>
             {statusCfg && StatusIcon && (
@@ -341,9 +341,14 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                     <div className="space-y-1.5">
                       {/* Main guest */}
                       <div className="flex items-center justify-between text-xs bg-zinc-50 dark:bg-zinc-800/50 rounded-lg px-2 py-1.5">
-                        <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                          1. {booking.guestDetails?.fullName} <span className="text-zinc-400 font-normal">— Asosiy mehmon</span>
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {booking.guestDetails?.guestImage && (
+                            <img src={getImageUrl(booking.guestDetails.guestImage) || ''} alt="Guest" className="w-6 h-6 rounded-full object-cover border border-zinc-200 dark:border-zinc-700" />
+                          )}
+                          <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                            1. {booking.guestDetails?.fullName} <span className="text-zinc-400 font-normal">— Asosiy mehmon</span>
+                          </span>
+                        </div>
                         {familyCount > 1 && (
                           <button
                             onClick={() => {

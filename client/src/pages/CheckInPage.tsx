@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, CheckCircle2, UserPlus, Trash2, Users, Calculator, Tag, ShoppingCart } from 'lucide-react';
+import { Loader2, CheckCircle2, UserPlus, Trash2, Users, Calculator, Tag, ShoppingCart, Camera, Image as ImageIcon, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { handlePrintReceipt } from '../utils/printReceipt';
+
 
 interface FamilyMember {
   historyNumber: string;
@@ -23,6 +24,8 @@ interface FamilyMember {
   customPrice?: number;
   passportSeries?: string;
   dailyExpense?: number; // Kunlik chiqim (UZS/kun)
+  guestImageFile?: File | null;
+  guestImagePreview?: string | null;
 }
 
 export default function CheckInPage() {
@@ -37,11 +40,11 @@ export default function CheckInPage() {
     gender: z.enum(['male', 'female']),
     country: z.string().min(2, t('checkin.country')),
     maritalStatus: z.enum(['single', 'married']).optional(),
-    historyNumber: z.string().min(1, 'Istoriya raqami majburiy'),
+    historyNumber: z.string().min(1, t('checkin.history_required')),
     passportSeries: z.string().optional(),
     profession: z.string().optional(),
-    checkInDate: z.string().min(1, 'Kelish sanasi majburiy'),
-    checkOutDate: z.string().min(1, 'Ketish sanasi majburiy'),
+    checkInDate: z.string().min(1, t('checkin.checkin_required')),
+    checkOutDate: z.string().min(1, t('checkin.checkout_required')),
     paymentMethod: z.enum(['cash', 'terminal', 'click', 'transfer']),
     paidAmount: z.coerce.number().min(0),
   });
@@ -51,6 +54,7 @@ export default function CheckInPage() {
   const checkInMutation = useCheckIn();
   const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [createdBooking, setCreatedBooking] = useState<any>(null);
 
   // === Oila a'zolari ===
@@ -61,6 +65,11 @@ export default function CheckInPage() {
   const [mainDailyExpense, setMainDailyExpense] = useState<string>(''); // Asosiy mehmon kunlik chiqimi
   const [useNegotiated, setUseNegotiated] = useState(false);
   const [negotiatedPrice, setNegotiatedPrice] = useState<string>('');
+
+  // === Rasm yuklash ===
+  const [guestImageFile, setGuestImageFile] = useState<File | null>(null);
+  const [guestImagePreview, setGuestImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
@@ -125,7 +134,8 @@ export default function CheckInPage() {
   const addFamilyMember = () => {
     setFamilyMembers([...familyMembers, {
       historyNumber: '', fullName: '', birthDate: '', gender: 'male',
-      relationship: '', customPrice: effectiveMainPrice, passportSeries: '', dailyExpense: 0
+      relationship: '', customPrice: effectiveMainPrice, passportSeries: '', dailyExpense: 0,
+      guestImageFile: null, guestImagePreview: null
     }]);
   };
 
@@ -133,7 +143,7 @@ export default function CheckInPage() {
     setFamilyMembers(familyMembers.filter((_, i) => i !== index));
   };
 
-  const updateFamilyMember = (index: number, field: keyof FamilyMember, value: string | number) => {
+  const updateFamilyMember = (index: number, field: keyof FamilyMember, value: any) => {
     const updated = [...familyMembers];
     (updated[index] as any)[field] = value;
 
@@ -148,7 +158,7 @@ export default function CheckInPage() {
     setFamilyMembers(updated);
   };
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     // Kunlik chiqimlar — additionalCharges sifatida
     const additionalCharges: Array<{ description: string; amount: number }> = [];
 
@@ -168,43 +178,103 @@ export default function CheckInPage() {
       }
     });
 
-    const payload = {
-      roomId: data.roomId,
-      guestDetails: {
-        historyNumber: data.historyNumber,
-        fullName: data.fullName,
-        phone: data.phone,
-        birthDate: data.birthDate || undefined,
-        gender: data.gender,
-        country: data.country,
-        profession: data.profession,
-        maritalStatus: 'single',
-        passportSeries: data.passportSeries,
-        familyMembers: familyMembers.length > 0 ? familyMembers.map(m => ({
-          historyNumber: m.historyNumber,
-          fullName: m.fullName,
-          birthDate: m.birthDate || undefined,
-          gender: m.gender,
-          relationship: m.relationship,
-          passportSeries: m.passportSeries
-        })) : undefined,
-      },
-      checkInDate: data.checkInDate,
-      checkOutDate: data.checkOutDate,
-      paymentMethod: data.paymentMethod,
-      paidAmount: data.paidAmount,
-      pricePerPerson: effectiveMainPrice,
-      negotiatedPrice: useNegotiated && negotiatedPrice ? Number(negotiatedPrice) : calculatedTotal,
-      additionalCharges: additionalCharges.length > 0 ? additionalCharges : undefined,
-    };
+    try {
+      let guestImageUrl = undefined;
 
-    checkInMutation.mutate(payload, {
-      onSuccess: (res) => {
-        setSuccessMsg(res.message);
-        setCreatedBooking(res.booking);
-        window.scrollTo(0, 0);
+      if (guestImageFile) {
+        setIsUploadingImage(true);
+        const formData = new FormData();
+        formData.append('image', guestImageFile);
+        const token = localStorage.getItem('accessToken');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const res = await fetch(`${apiUrl}/upload/image`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || t('common.image_upload_error'));
+        guestImageUrl = data.url;
       }
-    });
+
+      // Hamrohlar rasmlarini yuklash
+      const updatedFamilyMembers = await Promise.all(
+        familyMembers.map(async (m) => {
+          let memberImageUrl = undefined;
+          if (m.guestImageFile) {
+            const formData = new FormData();
+            formData.append('image', m.guestImageFile);
+            const token = localStorage.getItem('accessToken');
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const res = await fetch(`${apiUrl}/upload/image`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+              body: formData
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || t('common.image_upload_error'));
+            memberImageUrl = data.url;
+          }
+          return {
+            historyNumber: m.historyNumber,
+            fullName: m.fullName,
+            birthDate: m.birthDate || undefined,
+            gender: m.gender,
+            relationship: m.relationship,
+            passportSeries: m.passportSeries,
+            guestImage: memberImageUrl
+          };
+        })
+      );
+
+      const payload = {
+        roomId: data.roomId,
+        guestDetails: {
+          historyNumber: data.historyNumber,
+          fullName: data.fullName,
+          phone: data.phone,
+          birthDate: data.birthDate || undefined,
+          gender: data.gender,
+          country: data.country,
+          profession: data.profession,
+          maritalStatus: 'single',
+          passportSeries: data.passportSeries,
+          guestImage: guestImageUrl,
+          familyMembers: updatedFamilyMembers.length > 0 ? updatedFamilyMembers : undefined,
+        },
+        checkInDate: data.checkInDate,
+        checkOutDate: data.checkOutDate,
+        paymentMethod: data.paymentMethod,
+        paidAmount: data.paidAmount,
+        pricePerPerson: effectiveMainPrice,
+        negotiatedPrice: useNegotiated && negotiatedPrice ? Number(negotiatedPrice) : calculatedTotal,
+        additionalCharges: additionalCharges.length > 0 ? additionalCharges : undefined,
+      };
+
+      checkInMutation.mutate(payload, {
+        onSuccess: (res) => {
+          setSuccessMsg(res.message);
+          setCreatedBooking(res.booking);
+          setErrorMsg('');
+          window.scrollTo(0, 0);
+        },
+        onError: (err: any) => {
+          console.error('CheckIn xatosi:', err);
+          setErrorMsg(err.response?.data?.message || err.message || t('common.unknown_error'));
+          window.scrollTo(0, 0);
+        }
+      });
+    } catch (error: any) {
+      console.error('Submit xatosi:', error);
+      setErrorMsg(error.message || t('common.error'));
+      window.scrollTo(0, 0);
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   if (successMsg) {
@@ -234,7 +304,7 @@ export default function CheckInPage() {
               })}
               className="bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 shadow-lg shadow-emerald-600/20"
             >
-              Chek chiqarish
+              {t('common.print_receipt')}
             </Button>
           )}
         </div>
@@ -243,18 +313,67 @@ export default function CheckInPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div data-aos="fade-up" className="max-w-4xl mx-auto space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">{t('checkin.title')}</h2>
         <p className="text-zinc-500 dark:text-zinc-400">{t('checkin.subtitle')}</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
+      {errorMsg && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <p className="text-sm font-medium text-red-600 dark:text-red-400">{errorMsg}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit as any, (formErrors) => {
+        console.error('Form validation errors:', formErrors);
+        setErrorMsg(t('checkin.validation_error'));
+        window.scrollTo(0, 0);
+      })} className="space-y-6">
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md space-y-4">
           <h3 className="text-lg font-medium text-zinc-800 dark:text-zinc-200 border-b border-zinc-200 dark:border-zinc-800 pb-2">{t('checkin.personal_info')}</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-shrink-0 space-y-3 flex flex-col items-center">
+              <div className="w-32 h-32 rounded-xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 flex flex-col items-center justify-center overflow-hidden relative">
+                {guestImagePreview ? (
+                  <>
+                    <img src={guestImagePreview} alt="Guest" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => { setGuestImageFile(null); setGuestImagePreview(null); }}
+                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </>
+                ) : (
+                  <div className="text-zinc-400 dark:text-zinc-500 flex flex-col items-center">
+                    <ImageIcon className="w-8 h-8 mb-2" />
+                    <span className="text-xs text-center px-2">{t('checkin.image_optional')}</span>
+                  </div>
+                )}
+              </div>
+              <Label className="cursor-pointer bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 py-2 px-4 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                <Camera className="w-4 h-4" />
+                {t('common.upload_image')}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const file = e.target.files[0];
+                      setGuestImageFile(file);
+                      setGuestImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                />
+              </Label>
+            </div>
+
+            <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.history_number', 'Istoriya raqami (History №)')}</Label>
               <Input {...register('historyNumber')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="Masalan: 12345 yoki AB-123" />
               {errors.historyNumber && <p className="text-xs text-red-500">{String(errors.historyNumber.message)}</p>}
@@ -287,7 +406,7 @@ export default function CheckInPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Kasbi (Profession)</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.profession')}</Label>
               <Input {...register('profession')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="O'qituvchi, Shifokor..." />
               {errors.profession && <p className="text-xs text-red-500">{String(errors.profession.message)}</p>}
             </div>
@@ -306,7 +425,7 @@ export default function CheckInPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Pasport seriyasi va raqami</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.passport_series')}</Label>
               <Input {...register('passportSeries')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" placeholder="Masalan: AB 1234567" />
               {errors.passportSeries && <p className="text-xs text-red-500">{String(errors.passportSeries.message)}</p>}
             </div>
@@ -319,7 +438,7 @@ export default function CheckInPage() {
                 inputMode="numeric"
                 value={mainGuestPrice}
                 onChange={(e) => setMainGuestPrice(e.target.value)}
-                placeholder={selectedRoom ? `${selectedRoom.pricePerNight.toLocaleString()}` : 'Avtomatik xona narxi'}
+                placeholder={selectedRoom ? `${selectedRoom.pricePerNight.toLocaleString()}` : t('checkin.auto_room_price')}
                 className="bg-white dark:bg-zinc-900 border-emerald-300 dark:border-emerald-800 text-zinc-900 dark:text-zinc-100 font-semibold"
               />
             </div>
@@ -335,7 +454,7 @@ export default function CheckInPage() {
                 inputMode="numeric"
                 value={mainDailyExpense}
                 onChange={(e) => setMainDailyExpense(e.target.value)}
-                placeholder="Masalan: 50000 (ixtiyoriy)"
+                placeholder={`${t('common.example')}: 50000 (${t('common.optional')})`}
                 className="bg-white dark:bg-zinc-900 border-orange-300 dark:border-orange-800/50 text-zinc-900 dark:text-zinc-100"
               />
               {mainDailyExpenseNum > 0 && nights > 0 && (
@@ -343,6 +462,7 @@ export default function CheckInPage() {
                   {mainDailyExpenseNum.toLocaleString()} × {nights} kun = <strong>{(mainDailyExpenseNum * nights).toLocaleString()} UZS</strong>
                 </p>
               )}
+            </div>
             </div>
           </div>
         </div>
@@ -421,6 +541,42 @@ export default function CheckInPage() {
                         className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"
                       />
                     </div>
+                    <div className="space-y-1 lg:col-span-1">
+                      <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.image_optional')}</Label>
+                      <div className="flex items-center gap-2">
+                        {member.guestImagePreview ? (
+                          <div className="relative w-9 h-9 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 overflow-hidden shrink-0">
+                            <img src={member.guestImagePreview} alt="Guest" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => { updateFamilyMember(index, 'guestImageFile', null); updateFamilyMember(index, 'guestImagePreview', null); }}
+                              className="absolute top-0 right-0 bg-red-500/80 text-white p-0.5"
+                            >
+                              <X className="w-2.5 h-2.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <Label className="cursor-pointer bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 h-9 w-9 rounded flex items-center justify-center shrink-0 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+                            <Camera className="w-4 h-4" />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  const file = e.target.files[0];
+                                  updateFamilyMember(index, 'guestImageFile', file);
+                                  updateFamilyMember(index, 'guestImagePreview', URL.createObjectURL(file));
+                                }
+                              }}
+                            />
+                          </Label>
+                        )}
+                        <span className="text-xs text-zinc-500 dark:text-zinc-500 hidden xl:block">
+                          {member.guestImagePreview ? t('common.uploaded') : t('common.upload')}
+                        </span>
+                      </div>
+                    </div>
 
                     <div className="space-y-1">
                       <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
@@ -449,7 +605,7 @@ export default function CheckInPage() {
                     </div>
                     {/* Kunlik narx */}
                     <div className="space-y-1">
-                      <Label className="text-xs text-emerald-600 dark:text-emerald-500 font-semibold">Narx (UZS/kun)</Label>
+                      <Label className="text-xs text-emerald-600 dark:text-emerald-500 font-semibold">{t('checkin.price_per_day')}</Label>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -506,7 +662,7 @@ export default function CheckInPage() {
                   {rooms?.map((room: any) => (
                     <SelectItem key={room._id} value={room._id} className="text-zinc-900 dark:text-zinc-100">
                       {t('modals.room.number').split(' ')[0]} {room.roomNumber} — {t(`roomType.${room.type}`)} ({room.pricePerNight.toLocaleString()} UZS) 
-                      {room.capacity > 0 && <span className="ml-2 text-emerald-500 font-bold bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded text-xs">({room.capacity - (room.occupiedBeds || 0)} ta bo'sh)</span>}
+                      {room.capacity > 0 && <span className="ml-2 text-emerald-500 font-bold bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded text-xs">({room.capacity - (room.occupiedBeds || 0)} {t('checkin.capacity_left', {count: ''}).replace('(', '').replace(')', '')})</span>}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -556,11 +712,11 @@ export default function CheckInPage() {
                     <span className="text-xs">
                       {numberOfPeople > (selectedRoom.capacity || 1) ? (
                         <span className="text-red-500 bg-red-50 dark:bg-red-950/30 px-1.5 py-0.5 rounded">
-                          (Sig'imdan {numberOfPeople - (selectedRoom.capacity || 1)} ta ko'p)
+                          {t('checkin.capacity_exceeded', { count: numberOfPeople - (selectedRoom.capacity || 1) })}
                         </span>
                       ) : (
                         <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
-                          ({(selectedRoom.capacity || 1) - numberOfPeople} ta bo'sh joy qoldi)
+                          {t('checkin.capacity_left', { count: (selectedRoom.capacity || 1) - numberOfPeople })}
                         </span>
                       )}
                     </span>
@@ -583,7 +739,7 @@ export default function CheckInPage() {
               <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">{t('checkin.calc_list')}</p>
               <div className="text-xs text-zinc-600 dark:text-zinc-400 space-y-0.5">
                 <div className="flex justify-between py-0.5 font-semibold text-zinc-700 dark:text-zinc-300">
-                  <span>1. {watch('fullName') ? watch('fullName') : <span className="italic text-zinc-400">{t('checkin.main_guest')}</span>} — <span className="text-zinc-400">Asosiy mehmon</span></span>
+                  <span>1. {watch('fullName') ? watch('fullName') : <span className="italic text-zinc-400">{t('checkin.main_guest')}</span>} — <span className="text-zinc-400">{t('checkin.main_guest')}</span></span>
                   <span className="font-medium">{effectiveMainPrice.toLocaleString()} UZS/kun</span>
                 </div>
                 {mainDailyExpenseNum > 0 && (
@@ -675,11 +831,11 @@ export default function CheckInPage() {
 
         <Button
           type="submit"
-          disabled={checkInMutation.isPending}
+          disabled={checkInMutation.isPending || isUploadingImage}
           className="w-full h-12 text-lg bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20"
         >
-          {checkInMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-          {t('checkin.btn_submit')}
+          {(checkInMutation.isPending || isUploadingImage) ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+          {isUploadingImage ? t('common.uploading_image') : t('checkin.btn_submit')}
         </Button>
       </form>
     </div>

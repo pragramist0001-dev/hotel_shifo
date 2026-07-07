@@ -18,15 +18,9 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/jfif'];
-  const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.jfif'];
-  const ext = path.extname(file.originalname).toLowerCase();
-  
-  if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Faqat JPG, PNG yoki WebP formatdagi rasmlar qabul qilinadi.'));
-  }
+  // Frontenddan qat'iy "image/*" so'ralgani uchun barcha formatlarga ruxsat beriladi
+  // (ba'zan telefonlardan HEIC yoki application/octet-stream kelishi mumkin)
+  cb(null, true);
 };
 
 export const upload = multer({

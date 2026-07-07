@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft, User, Phone, MapPin, Calendar, Clock, CreditCard, Receipt, Users, FileText, Snowflake, Play, CreditCard as PaymentIcon } from 'lucide-react';
 import { handlePrintReceipt } from '../utils/printReceipt';
 import { printAdminReport } from '../utils/printAdminReport';
+import { getImageUrl } from '../utils/imageUrl';
 import BookingPaymentModal from '@/components/modals/BookingPaymentModal';
 
 export default function ClientProfilePage() {
@@ -48,6 +49,11 @@ export default function ClientProfilePage() {
         <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
+        {client.guestImage && (
+          <div className="w-16 h-16 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-800 flex-shrink-0 bg-zinc-100 dark:bg-zinc-800">
+             <img src={getImageUrl(client.guestImage) || ''} alt={client.fullName} className="w-full h-full object-cover" />
+          </div>
+        )}
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             {client.fullName}

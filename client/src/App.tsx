@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/useAuthStore';
 import { useSocketStore } from './stores/useSocketStore';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 // Layouts
 import MainLayout from './components/layout/MainLayout';
@@ -31,6 +33,8 @@ function App() {
   const { connect, disconnect } = useSocketStore();
 
   useEffect(() => {
+    AOS.init({ duration: 800, once: true, offset: 50 });
+    
     if (isAuthenticated) {
       const token = localStorage.getItem('accessToken');
       if (token) connect(token);
