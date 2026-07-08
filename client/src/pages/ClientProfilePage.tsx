@@ -1,9 +1,9 @@
 
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useClientBookings, useFreezeBooking, useResumeBooking } from '../hooks/useBookings';
+import { useClientBookings, useFreezeBooking, useResumeBooking, useDeletePayment } from '../hooks/useBookings';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, User, Phone, MapPin, Calendar, Clock, CreditCard, Receipt, Users, FileText, Snowflake, Play, CreditCard as PaymentIcon } from 'lucide-react';
+import { Loader2, ArrowLeft, User, Phone, MapPin, Calendar, Clock, CreditCard, Receipt, Users, FileText, Snowflake, Play, CreditCard as PaymentIcon, Trash2 } from 'lucide-react';
 import { handlePrintReceipt } from '../utils/printReceipt';
 import { printAdminReport } from '../utils/printAdminReport';
 import { getImageUrl } from '../utils/imageUrl';
@@ -16,6 +16,7 @@ export default function ClientProfilePage() {
   const [selectedBookingForPayment, setSelectedBookingForPayment] = useState<any>(null);
   const { mutate: freezeBooking, isPending: isFreezing } = useFreezeBooking();
   const { mutate: resumeBooking, isPending: isResuming } = useResumeBooking();
+  const { mutate: deletePayment, isPending: isDeletingPayment } = useDeletePayment();
 
   const { data, isLoading, error } = useClientBookings(phone || '');
 
@@ -41,7 +42,7 @@ export default function ClientProfilePage() {
     );
   }
 
-  const { client, stats, bookings } = data;
+  const { client, stats, bookings, payments = [] } = data;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -300,6 +301,56 @@ export default function ClientProfilePage() {
                     Chek nusxasi
                   </Button>
                 </div>
+
+                {payments.filter((p: any) => p.relatedBooking === booking._id).length > 0 && (
+                  <div className="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-800/10">
+                     <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">To'lovlar va cheklar tarixi:</p>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                       {payments.filter((p: any) => p.relatedBooking === booking._id).map((payment: any, idx: number) => (
+                         <div key={idx} className="flex flex-col bg-white dark:bg-zinc-800 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-sm">
+                           <div className="flex justify-between items-center mb-2">
+                             <span className="font-bold text-emerald-600 dark:text-emerald-400">{payment.amount.toLocaleString()} UZS</span>
+                             <div className="flex items-center gap-2">
+                               <span className="text-zinc-500 text-xs uppercase bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 rounded-full">{payment.paymentMethod || 'Naqd'}</span>
+                               <Button
+                                 variant="ghost"
+                                 size="icon"
+                                 className="w-6 h-6 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                 disabled={isDeletingPayment}
+                                 onClick={() => {
+                                   if(confirm("Bu to'lovni o'chirishni tasdiqlaysizmi? (Chek rasmi bilan birga o'chib ketadi)")) {
+                                     deletePayment(payment._id);
+                                   }
+                                 }}
+                                 title="To'lovni bekor qilish"
+                               >
+                                 {isDeletingPayment ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                               </Button>
+                             </div>
+                           </div>
+                           <p className="text-zinc-400 text-xs mb-3">{new Date(payment.date).toLocaleString('uz-UZ')}</p>
+                           
+                           {payment.receiptImage ? (
+                             <div className="mt-auto pt-2 border-t border-zinc-100 dark:border-zinc-700 relative group">
+                               <a href={getImageUrl(payment.receiptImage) || '#'} target="_blank" rel="noopener noreferrer" className="block w-full overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900">
+                                 <img 
+                                   src={getImageUrl(payment.receiptImage) || ''} 
+                                   alt="Chek" 
+                                   className="w-full h-32 object-cover hover:scale-105 transition-transform"
+                                 />
+                               </a>
+                             </div>
+                           ) : (
+                             <div className="mt-auto pt-2 border-t border-zinc-100 dark:border-zinc-700 text-center">
+                               <p className="text-xs text-zinc-400 py-2 italic">Chek rasmi yuklanmagan</p>
+                             </div>
+                           )}
+                         </div>
+                       ))}
+                     </div>
+                  </div>
+                )}
+
               </div>
             );
           })}

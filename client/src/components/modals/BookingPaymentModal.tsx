@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAddPayment } from '../../hooks/useBookings';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import api from '../../lib/api';
 
 export default function BookingPaymentModal({
   isOpen,
@@ -26,6 +27,9 @@ export default function BookingPaymentModal({
     amount: '',
     paymentMethod: 'cash',
   });
+  
+  const [receiptImage, setReceiptImage] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (isOpen && booking) {
@@ -33,24 +37,40 @@ export default function BookingPaymentModal({
         amount: debt > 0 ? debt.toString() : '',
         paymentMethod: 'cash'
       });
+      setReceiptImage(null);
     }
   }, [isOpen, booking, debt]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!booking) return;
-
+    
+    setIsUploading(true);
+    let imageUrl = '';
+    
     try {
+      if (receiptImage) {
+        const uploadData = new FormData();
+        uploadData.append('image', receiptImage);
+        const uploadRes = await api.post('/upload/image', uploadData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        imageUrl = uploadRes.data.url;
+      }
+
       await addPayment({
         id: booking._id,
         data: {
           amount: Number(formData.amount),
           paymentMethod: formData.paymentMethod,
+          receiptImage: imageUrl || undefined,
         }
       });
       onClose();
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -116,12 +136,51 @@ export default function BookingPaymentModal({
               </Select>
             </div>
 
+            <div className="space-y-2">
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('finance.receipt_image', "Chek rasmi (ixtiyoriy)")}</Label>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  {/* Desktop: faqat fayl yuklash */}
+                  <Input
+                    id="receiptImageDesktop"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setReceiptImage(e.target.files?.[0] || null)}
+                    className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 flex-1 hidden md:block"
+                  />
+                  {/* Mobile/Tablet: kamerani ochadi */}
+                  <Input
+                    id="receiptImageMobile"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={(e) => setReceiptImage(e.target.files?.[0] || null)}
+                    className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 flex-1 md:hidden"
+                  />
+                  {receiptImage && (
+                    <Button type="button" variant="ghost" size="icon" onClick={() => setReceiptImage(null)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0">
+                      ✕
+                    </Button>
+                  )}
+                </div>
+                {receiptImage && (
+                  <div className="w-full max-h-48 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900">
+                    <img 
+                      src={URL.createObjectURL(receiptImage)} 
+                      alt="Receipt preview" 
+                      className="max-w-full max-h-48 object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} disabled={isPending} className="border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isPending || isUploading} className="border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
                 {t('common.cancel', 'Bekor qilish')}
               </Button>
-              <Button type="submit" disabled={isPending} className="bg-emerald-600 text-white hover:bg-emerald-700">
-                {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <Button type="submit" disabled={isPending || isUploading} className="bg-emerald-600 text-white hover:bg-emerald-700">
+                {(isPending || isUploading) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 {t('finance.save', 'Saqlash')}
               </Button>
             </div>

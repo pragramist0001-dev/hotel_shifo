@@ -5,17 +5,24 @@
 export const getImageUrl = (url: string | null | undefined): string | null => {
   if (!url) return null;
   
+  // Normalize backslashes to forward slashes for Windows compatibility
+  let normalizedUrl = url.replace(/\\/g, '/');
+
   // Allaqachon to'liq URL (http/https)
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
+  if (normalizedUrl.startsWith('http://') || normalizedUrl.startsWith('https://')) {
+    return normalizedUrl;
   }
   
   // Local rasm - server base URL qo'shish
   // Vite proxy orqali ham ishlaydi, lekin fallback uchun
-  if (url.startsWith('/uploads/')) {
+  if (!normalizedUrl.startsWith('/')) {
+    normalizedUrl = '/' + normalizedUrl;
+  }
+
+  if (normalizedUrl.startsWith('/uploads/')) {
     const serverUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
-    return `${serverUrl}${url}`;
+    return `${serverUrl}${normalizedUrl}`;
   }
   
-  return url;
+  return normalizedUrl;
 };

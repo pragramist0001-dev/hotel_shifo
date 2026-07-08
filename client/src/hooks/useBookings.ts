@@ -90,7 +90,22 @@ export const useAddPayment = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['clientBookings'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
+};
+
+export const useDeletePayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (transactionId: string) => {
+      const res = await api.delete(`/bookings/payment/${transactionId}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clientBookings'] });
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
     },
   });
 };
