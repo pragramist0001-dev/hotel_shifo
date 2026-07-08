@@ -7,6 +7,7 @@ export interface ITransaction extends Document {
   amount: number;
   description: string;
   paymentMethod?: string;
+  receiptImage?: string;
   relatedBooking?: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
   date: Date;
@@ -21,6 +22,7 @@ const TransactionSchema = new Schema<ITransaction>(
     amount: { type: Number, required: true, min: 0 },
     description: { type: String, required: true, trim: true },
     paymentMethod: { type: String, trim: true },
+    receiptImage: { type: String },
     relatedBooking: { type: Schema.Types.ObjectId, ref: 'Booking' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     date: { type: Date, default: Date.now },

@@ -324,7 +324,7 @@ export const getBookingById = async (req: AuthRequest, res: Response): Promise<v
 
 export const addPayment = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { amount, paymentMethod } = req.body;
+    const { amount, paymentMethod, receiptImage } = req.body;
     const booking = await Booking.findById(req.params.id).populate('room');
     if (!booking) {
       res.status(404).json({ message: 'Booking topilmadi.' });
@@ -345,6 +345,7 @@ export const addPayment = async (req: AuthRequest, res: Response): Promise<void>
       amount,
       description: `Xona ${(booking.room as any).roomNumber} - ${booking.guestDetails.fullName} qo'shimcha to'lov`,
       paymentMethod,
+      receiptImage,
       relatedBooking: booking._id,
       createdBy: req.user!._id,
       date: new Date(),
@@ -354,6 +355,41 @@ export const addPayment = async (req: AuthRequest, res: Response): Promise<void>
     if (io) io.emit('dashboard:update', { type: 'payment' });
 
     res.json({ message: 'To\'lov qabul qilindi.', booking });
+  } catch (error) {
+    res.status(500).json({ message: 'Server xatosi.' });
+  }
+};
+
+export const deletePayment = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { transactionId } = req.params;
+    const transaction = await Transaction.findById(transactionId);
+    if (!transaction) {
+      res.status(404).json({ message: 'Tranzaksiya topilmadi.' });
+      return;
+    }
+
+    if (transaction.relatedBooking) {
+      const booking = await Booking.findById(transaction.relatedBooking);
+      if (booking) {
+        booking.paidAmount = Math.max(0, booking.paidAmount - transaction.amount);
+        if (booking.paidAmount >= booking.totalPrice) {
+          booking.paymentStatus = 'paid';
+        } else if (booking.paidAmount > 0) {
+          booking.paymentStatus = 'partially_paid';
+        } else {
+          booking.paymentStatus = 'unpaid';
+        }
+        await booking.save();
+      }
+    }
+
+    await Transaction.findByIdAndDelete(transactionId);
+
+    const io = req.app.get('io');
+    if (io) io.emit('dashboard:update', { type: 'payment_deleted' });
+
+    res.json({ message: 'To\'lov o\'chirildi.' });
   } catch (error) {
     res.status(500).json({ message: 'Server xatosi.' });
   }
@@ -833,6 +869,12 @@ export const getClientBookings = async (req: AuthRequest, res: Response): Promis
     });
     const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
 
+    const payments = await Transaction.find({
+      relatedBooking: { $in: bookingIds },
+      type: 'income',
+      category: 'room_payment'
+    }).sort({ date: -1 });
+
     res.json({
       client: clientDetails,
       stats: {
@@ -841,7 +883,8 @@ export const getClientBookings = async (req: AuthRequest, res: Response): Promis
         totalDebt,
         totalExpense
       },
-      bookings
+      bookings,
+      payments
     });
   } catch (error) {
     res.status(500).json({ message: 'Server xatosi.' });

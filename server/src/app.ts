@@ -24,11 +24,24 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// CORS origins - bir nechta URL ni qo'llab-quvvatlash (vergul bilan ajratilgan)
+const getAllowedOrigins = (): string | string[] => {
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  // Vergul bilan ajratilgan bir nechta URL bo'lishi mumkin
+  if (clientUrl.includes(',')) {
+    return clientUrl.split(',').map((u) => u.trim());
+  }
+  return clientUrl;
+};
+
+const allowedOrigins = getAllowedOrigins();
+
 // Socket.io
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 
@@ -38,7 +51,7 @@ setupSocket(io);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
