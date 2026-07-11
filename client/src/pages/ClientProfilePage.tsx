@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useClientBookings, useFreezeBooking, useResumeBooking, useDeletePayment } from '../hooks/useBookings';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { getImageUrl } from '../utils/imageUrl';
 import BookingPaymentModal from '@/components/modals/BookingPaymentModal';
 
 export default function ClientProfilePage() {
+  const { t } = useTranslation();
   const { phone } = useParams<{ phone: string }>();
   const navigate = useNavigate();
 
@@ -36,7 +37,7 @@ export default function ClientProfilePage() {
           Orqaga
         </Button>
         <div className="text-center py-20 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <p className="text-zinc-500">Mijoz topilmadi yoki xatolik yuz berdi.</p>
+          <p className="text-zinc-500">{t('common.no_data', 'Mijoz topilmadi yoki xatolik yuz berdi.')}</p>
         </div>
       </div>
     );
@@ -59,7 +60,7 @@ export default function ClientProfilePage() {
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             {client.fullName}
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400">Mijoz kabineti</p>
+          <p className="text-zinc-500 dark:text-zinc-400">{t('clients.client_cabinet', 'Mijoz kabineti')}</p>
         </div>
         <div className="ml-auto">
           <Button 
@@ -67,7 +68,7 @@ export default function ClientProfilePage() {
             className="bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700"
           >
             <FileText className="w-4 h-4 mr-2" />
-            Adminga Hisobot
+            {t('reports.admin_title', 'Adminga Hisobot')}
           </Button>
         </div>
       </div>
@@ -77,20 +78,20 @@ export default function ClientProfilePage() {
         <div className="md:col-span-1 space-y-6">
           <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 border-b border-zinc-100 dark:border-zinc-800 pb-2">
-              Shaxsiy ma'lumotlar
+              {t('profile.personal_info', 'Shaxsiy ma\'lumotlar')}
             </h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <User className="w-5 h-5 text-emerald-600 mt-0.5" />
                 <div>
-                  <p className="text-sm text-zinc-500">To'liq ism</p>
+                  <p className="text-sm text-zinc-500">{t('profile.fullname', 'To\'liq ism')}</p>
                   <p className="font-medium text-zinc-900 dark:text-zinc-100">{client.fullName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-emerald-600 mt-0.5" />
                 <div>
-                  <p className="text-sm text-zinc-500">Telefon</p>
+                  <p className="text-sm text-zinc-500">{t('profile.phone', 'Telefon')}</p>
                   <p className="font-medium text-zinc-900 dark:text-zinc-100">{client.phone}</p>
                 </div>
               </div>
@@ -98,7 +99,7 @@ export default function ClientProfilePage() {
                 <div className="flex items-start gap-3">
                   <Calendar className="w-5 h-5 text-emerald-600 mt-0.5" />
                   <div>
-                    <p className="text-sm text-zinc-500">Tug'ilgan sana</p>
+                    <p className="text-sm text-zinc-500">{t('checkin.birth_date', 'Tug\'ilgan sana')}</p>
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">
                       {new Date(client.birthDate).toLocaleDateString('uz-UZ')}
                     </p>
@@ -109,7 +110,7 @@ export default function ClientProfilePage() {
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-emerald-600 mt-0.5" />
                   <div>
-                    <p className="text-sm text-zinc-500">Manzil</p>
+                    <p className="text-sm text-zinc-500">{t('checkin.country', 'Manzil')}</p>
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">{client.country}</p>
                   </div>
                 </div>
@@ -118,7 +119,7 @@ export default function ClientProfilePage() {
                 <div className="flex items-start gap-3">
                   <CreditCard className="w-5 h-5 text-emerald-600 mt-0.5" />
                   <div>
-                    <p className="text-sm text-zinc-500">Pasport</p>
+                    <p className="text-sm text-zinc-500">{t('checkin.passport_series', 'Pasport')}</p>
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">{client.passportSeries}</p>
                   </div>
                 </div>
@@ -127,7 +128,7 @@ export default function ClientProfilePage() {
                 <div className="flex items-start gap-3">
                   <Receipt className="w-5 h-5 text-emerald-600 mt-0.5" />
                   <div>
-                    <p className="text-sm text-zinc-500">Istoriya №</p>
+                    <p className="text-sm text-zinc-500">{t('checkin.history_number', 'Istoriya №')}</p>
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">{client.historyNumber}</p>
                   </div>
                 </div>
@@ -137,26 +138,26 @@ export default function ClientProfilePage() {
 
           <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800 p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-emerald-800 dark:text-emerald-400 mb-4 border-b border-emerald-200 dark:border-emerald-800/50 pb-2">
-              Statistika
+              {t('reports.subtitle', 'Statistika')}
             </h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-emerald-700 dark:text-emerald-500">Jami tashriflar:</span>
-                <span className="font-bold text-emerald-900 dark:text-emerald-300">{stats.totalVisits} ta</span>
+                <span className="text-sm text-emerald-700 dark:text-emerald-500">{t('reports.total_visits', 'Jami tashriflar:')}</span>
+                <span className="font-bold text-emerald-900 dark:text-emerald-300">{stats.totalVisits} {t('common.count_suffix', 'ta')}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-emerald-700 dark:text-emerald-500">Jami to'langan summa (Kirim):</span>
+                <span className="text-sm text-emerald-700 dark:text-emerald-500">{t('reports.total_income', 'Jami to\'langan summa (Kirim):')}</span>
                 <span className="font-bold text-emerald-900 dark:text-emerald-300">{stats.totalSpent.toLocaleString()} UZS</span>
               </div>
               {stats.totalExpense > 0 && (
                 <div className="flex justify-between items-center bg-orange-100 dark:bg-orange-900/30 p-2 rounded-lg mt-2 border border-orange-200 dark:border-orange-800">
-                  <span className="text-sm text-orange-700 dark:text-orange-400 font-semibold">Sanatoriya chiqimi:</span>
+                  <span className="text-sm text-orange-700 dark:text-orange-400 font-semibold">{t('reports.expenses', 'Sanatoriya chiqimi:')}</span>
                   <span className="font-bold text-orange-700 dark:text-orange-400">{stats.totalExpense.toLocaleString()} UZS</span>
                 </div>
               )}
               {stats.totalDebt > 0 && (
                 <div className="flex justify-between items-center bg-red-100 dark:bg-red-900/30 p-2 rounded-lg mt-2">
-                  <span className="text-sm text-red-700 dark:text-red-400 font-semibold">Qarzdorlik:</span>
+                  <span className="text-sm text-red-700 dark:text-red-400 font-semibold">{t('clients.debt_amount', 'Qarzdorlik:')}</span>
                   <span className="font-bold text-red-700 dark:text-red-400">{stats.totalDebt.toLocaleString()} UZS</span>
                 </div>
               )}
@@ -233,6 +234,69 @@ export default function ClientProfilePage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Oila a'zolari */}
+                {familyCount > 1 && (() => {
+                  const members = booking.guestDetails?.familyMembers || [];
+                  const hasSpouseLocal = booking.guestDetails?.maritalStatus === 'married' && booking.guestDetails?.spouseDetails?.fullName;
+                  return (
+                    <div className="px-6 pb-4">
+                      <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-3 flex items-center gap-2">
+                        <Users className="w-4 h-4" /> Oila a'zolari ro'yxati
+                      </p>
+                      <div className="space-y-2">
+                        {/* Asosiy mehmon */}
+                        <div className="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg px-3 py-2 border border-zinc-200 dark:border-zinc-700">
+                          {booking.guestDetails?.guestImage ? (
+                            <img src={getImageUrl(booking.guestDetails.guestImage) || ''} alt="" className="w-8 h-8 rounded-full object-cover border border-zinc-200 dark:border-zinc-700" />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center">
+                              <User className="w-4 h-4 text-zinc-400" />
+                            </div>
+                          )}
+                          <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 flex-1">
+                            1. {booking.guestDetails?.fullName}
+                          </span>
+                          <span className="text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">Asosiy</span>
+                        </div>
+                        {/* Turmush o'rtog'i */}
+                        {hasSpouseLocal && (
+                          <div className="flex items-center gap-3 bg-pink-50 dark:bg-pink-950/20 rounded-lg px-3 py-2 border border-pink-200 dark:border-pink-900/30">
+                            <div className="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center">
+                              <User className="w-4 h-4 text-pink-400" />
+                            </div>
+                            <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 flex-1">
+                              2. {booking.guestDetails.spouseDetails.fullName}
+                            </span>
+                            <span className="text-xs text-pink-500 bg-pink-100 dark:bg-pink-900/30 px-2 py-0.5 rounded-full">Turmush o'rtog'i</span>
+                          </div>
+                        )}
+                        {/* Oila a'zolari */}
+                        {members.map((m: any, i: number) => (
+                          <div key={i} className="flex items-center gap-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg px-3 py-2 border border-blue-200 dark:border-blue-900/30">
+                            {m.guestImage ? (
+                              <img src={getImageUrl(m.guestImage) || ''} alt="" className="w-8 h-8 rounded-full object-cover border border-blue-200 dark:border-blue-700" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                <User className="w-4 h-4 text-blue-400" />
+                              </div>
+                            )}
+                            <div className="flex-1">
+                              <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                                {(hasSpouseLocal ? 3 : 2) + i}. {m.fullName}
+                              </span>
+                              {m.relationship && <span className="ml-2 text-xs text-zinc-400">— {m.relationship}</span>}
+                            </div>
+                            <div className="text-right">
+                              {m.birthDate && <p className="text-xs text-zinc-400">{new Date(m.birthDate).toLocaleDateString('uz-UZ')}</p>}
+                              <span className="text-xs text-zinc-400">{m.gender === 'male' ? '👨' : '👩'}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 <div className="bg-zinc-50 dark:bg-zinc-800/20 px-6 py-3 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap justify-between items-center gap-4">
                   <div className="flex gap-2">

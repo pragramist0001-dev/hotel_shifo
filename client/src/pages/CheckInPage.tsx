@@ -44,6 +44,7 @@ export default function CheckInPage() {
     passportSeries: z.string().optional(),
     profession: z.string().optional(),
     checkInDate: z.string().min(1, t('checkin.checkin_required')),
+    checkInTime: z.string().optional(),
     checkOutDate: z.string().min(1, t('checkin.checkout_required')),
     paymentMethod: z.enum(['cash', 'terminal', 'click', 'transfer']),
     paidAmount: z.coerce.number().min(0),
@@ -81,6 +82,7 @@ export default function CheckInPage() {
       maritalStatus: 'single',
       paymentMethod: 'cash',
       checkInDate: today,
+      checkInTime: new Date().toTimeString().slice(0, 5),
       checkOutDate: tomorrow,
       paidAmount: 0,
       country: 'O\'zbekiston',
@@ -241,12 +243,13 @@ export default function CheckInPage() {
           gender: data.gender,
           country: data.country,
           profession: data.profession,
-          maritalStatus: 'single',
+          maritalStatus: updatedFamilyMembers.length > 0 ? 'married' : 'single',
           passportSeries: data.passportSeries,
           guestImage: guestImageUrl,
           familyMembers: updatedFamilyMembers.length > 0 ? updatedFamilyMembers : undefined,
         },
         checkInDate: data.checkInDate,
+        checkInTime: (data as any).checkInTime || undefined,
         checkOutDate: data.checkOutDate,
         paymentMethod: data.paymentMethod,
         paidAmount: data.paidAmount,
@@ -278,13 +281,17 @@ export default function CheckInPage() {
   };
 
   if (successMsg) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <CheckCircle2 className="w-20 h-20 text-emerald-500" />
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t('checkin.success')}</h2>
-        <p className="text-zinc-500 dark:text-zinc-400">{successMsg}</p>
+    // rooms — muvaffaqiyatli check-in dan KEYIN React Query tomonidan yangilanadi (selected xona endi 'booked')
+    const availableRooms = rooms || [];
+    const availableCount = availableRooms.length;
 
-        <div className="flex gap-4 mt-4">
+    return (
+      <div className="flex flex-col items-center justify-center py-16 space-y-6 max-w-lg mx-auto">
+        <CheckCircle2 className="w-20 h-20 text-emerald-500 drop-shadow-lg" />
+        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t('checkin.success')}</h2>
+        <p className="text-zinc-500 dark:text-zinc-400 text-center">{successMsg}</p>
+
+        <div className="flex gap-4">
           <Button onClick={() => navigate('/rooms')} variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950">
             {t('checkin.back_to_rooms')}
           </Button>
@@ -306,6 +313,44 @@ export default function CheckInPage() {
             >
               {t('common.print_receipt')}
             </Button>
+          )}
+        </div>
+
+        {/* Bo'sh xonalar */}
+        <div className="w-full mt-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/50 backdrop-blur-md overflow-hidden shadow-sm">
+          <div className={`flex items-center justify-between px-5 py-3 border-b border-zinc-100 dark:border-zinc-800 ${availableCount === 0 ? 'bg-red-50 dark:bg-red-950/30' : 'bg-emerald-50 dark:bg-emerald-950/30'}`}>
+            <span className="font-semibold text-sm text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+              🏨 Bo'sh xonalar
+            </span>
+            <span className={`text-2xl font-black ${availableCount === 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+              {availableCount} ta
+            </span>
+          </div>
+
+          {availableCount === 0 ? (
+            <div className="px-5 py-4 text-center">
+              <p className="text-sm font-semibold text-red-600 dark:text-red-400">⚠️ Barcha xonalar band!</p>
+              <p className="text-xs text-zinc-400 mt-1">Hozirda bo'sh xona mavjud emas.</p>
+            </div>
+          ) : (
+            <div className="px-5 py-3 flex flex-wrap gap-2">
+              {availableRooms.slice(0, 12).map((r: any) => (
+                <span
+                  key={r._id}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-xs font-bold"
+                >
+                  #{r.roomNumber}
+                  {r.capacity > 0 && (
+                    <span className="text-emerald-400 dark:text-emerald-600 font-normal">·{r.capacity}o'rin</span>
+                  )}
+                </span>
+              ))}
+              {availableRooms.length > 12 && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-xs font-medium">
+                  +{availableRooms.length - 12} ta yana
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -673,6 +718,17 @@ export default function CheckInPage() {
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('modals.room_detail.check_in').replace(': ', '')}</Label>
               <Input type="date" {...register('checkInDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                <span>⏰</span> {t('checkin.arrival_time', 'Kelgan vaqt (soat)')}
+              </Label>
+              <Input
+                type="time"
+                {...register('checkInTime' as any)}
+                className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100"
+              />
             </div>
 
             <div className="space-y-2">

@@ -398,7 +398,17 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
 
                   <InfoRow
                     label={t('reception.checkin_date', 'Kelgan sana')}
-                    value={checkInDate?.toLocaleDateString('uz-UZ')}
+                    value={
+                      <span className="flex items-center gap-2">
+                        <span>{checkInDate?.toLocaleDateString('uz-UZ')}</span>
+                        {booking.checkInTime && (
+                          <span className="flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+                            <Clock className="w-3 h-3" />
+                            {booking.checkInTime}
+                          </span>
+                        )}
+                      </span>
+                    }
                     icon={Calendar}
                   />
                   <InfoRow

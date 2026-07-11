@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useState, useMemo } from 'react';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -151,6 +151,14 @@ export default function RoomsPage() {
               {/* Status bar top */}
               <div className={cn("absolute top-0 left-0 w-full h-1 z-20", bgColor)}></div>
 
+              {/* Total Capacity Badge */}
+              {room.capacity > 0 && (
+                <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-black/40 backdrop-blur-md text-white px-1.5 py-0.5 rounded text-[10px] font-medium border border-white/10 shadow-sm">
+                  <Users className="w-3 h-3 opacity-80" />
+                  <span>{room.capacity}</span>
+                </div>
+              )}
+
               {/* Image */}
               {room.imageUrl ? (
                 <div className="w-full h-32 relative overflow-hidden border-b border-zinc-100 dark:border-zinc-800/50">
@@ -183,13 +191,23 @@ export default function RoomsPage() {
                   )}
                 </span>
 
+                {/* Band xonada qolgan o'rinlar */}
+                {room.status === 'booked' && room.capacity > 0 && (() => {
+                  const remaining = room.capacity - (room.occupiedBeds || 0);
+                  return remaining > 0 ? (
+                    <span className="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 text-[10px] font-bold">
+                      +{remaining} o'rin bor
+                    </span>
+                  ) : null;
+                })()}
+
                 {room.status === 'booked' && room.currentBookings && room.currentBookings.length > 0 && (
-                  <span className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 truncate max-w-full px-1 text-center">
+                  <span className="mt-1.5 text-[10px] text-zinc-400 dark:text-zinc-500 truncate max-w-full px-1 text-center">
                     {room.currentBookings.map((b: any) => b.guestDetails?.fullName?.split(' ')[0]).join(', ')}
                   </span>
                 )}
                 {room.status === 'booked' && !room.currentBookings && room.currentBooking && (
-                  <span className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 truncate max-w-full px-1 text-center">
+                  <span className="mt-1.5 text-[10px] text-zinc-400 dark:text-zinc-500 truncate max-w-full px-1 text-center">
                     {room.currentBooking.guestDetails?.fullName?.split(' ')[0]}
                   </span>
                 )}

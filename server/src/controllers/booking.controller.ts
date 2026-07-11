@@ -9,7 +9,7 @@ import { calculateOvertime } from '../services/overtime.service';
 
 export const checkIn = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { roomId, guestDetails, checkInDate, checkOutDate, paymentMethod, paidAmount, notes, pricePerPerson, negotiatedPrice } = req.body;
+    const { roomId, guestDetails, checkInDate, checkInTime, checkOutDate, paymentMethod, paidAmount, notes, pricePerPerson, negotiatedPrice } = req.body;
 
     // Xonani tekshirish
     const room = await Room.findById(roomId);
@@ -28,7 +28,10 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
 
     // Oilaviy holat validatsiyasi
     if (guestDetails.maritalStatus === 'married') {
-      if (!guestDetails.spouseDetails?.fullName) {
+      // Agar oila a'zolari ham yo'q va turmush o'rtog'i ham yo'q bo'lsa — xato
+      const hasFamilyMembers = guestDetails.familyMembers && guestDetails.familyMembers.length > 0;
+      const hasSpouseDetails = guestDetails.spouseDetails?.fullName;
+      if (!hasSpouseDetails && !hasFamilyMembers) {
         res.status(400).json({ message: 'Turmush o\'rtog\'ining ismi majburiy.' });
         return;
       }
@@ -60,6 +63,7 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
       room: room._id,
       guestDetails,
       checkInDate: parsedCheckIn,
+      checkInTime: checkInTime || undefined,
       checkOutDate: parsedCheckOut,
       numberOfNights: calculatedNights,
       pricePerPerson: pricePerPerson ? Number(pricePerPerson) : undefined,
@@ -408,6 +412,7 @@ export const updateBooking = async (req: AuthRequest, res: Response): Promise<vo
       if (guestDetails.birthDate !== undefined) booking.guestDetails.birthDate = guestDetails.birthDate;
       if (guestDetails.country !== undefined) booking.guestDetails.country = guestDetails.country;
       if (guestDetails.passportSeries !== undefined) booking.guestDetails.passportSeries = guestDetails.passportSeries;
+      if (guestDetails.guestImage !== undefined) booking.guestDetails.guestImage = guestDetails.guestImage;
     }
 
     if (checkInDate || checkOutDate) {
@@ -474,13 +479,21 @@ export const deleteBooking = async (req: AuthRequest, res: Response): Promise<vo
     }
     
     if (booking.status === 'active') {
+      const spouseCount = (booking.guestDetails.maritalStatus === 'married' && booking.guestDetails.spouseDetails?.fullName) ? 1 : 0;
+      const numberOfPeople = 1 + spouseCount + (booking.guestDetails.familyMembers?.length || 0);
+
       const room = await Room.findById(booking.room);
       if (room) {
-        room.status = 'available';
-        room.currentBooking = undefined;
+        // currentBookings arraydan olib tashlash
+        if (room.currentBookings) {
+          room.currentBookings = room.currentBookings.filter((bid: any) => bid.toString() !== booking._id.toString());
+        }
+        room.occupiedBeds = Math.max(0, (room.occupiedBeds || 0) - numberOfPeople);
+        room.currentBooking = room.currentBookings && room.currentBookings.length > 0 ? room.currentBookings[0] : undefined;
+        room.status = (room.occupiedBeds === 0 || !room.currentBookings || room.currentBookings.length === 0) ? 'available' : 'booked';
         await room.save();
         const io = req.app.get('io');
-        if (io) io.emit('room:statusChanged', { roomId: room._id, status: 'available', roomNumber: room.roomNumber });
+        if (io) io.emit('room:statusChanged', { roomId: room._id, status: room.status, roomNumber: room.roomNumber });
       }
     }
     
@@ -527,8 +540,16 @@ export const freezeBooking = async (req: AuthRequest, res: Response): Promise<vo
     booking.status = 'frozen';
     await booking.save();
 
-    room.status = 'cleaning';
-    room.currentBooking = undefined;
+    // Xona ma'lumotlarini yangilash
+    const spouseCount = (booking.guestDetails.maritalStatus === 'married' && booking.guestDetails.spouseDetails?.fullName) ? 1 : 0;
+    const numberOfPeople = 1 + spouseCount + (booking.guestDetails.familyMembers?.length || 0);
+
+    if (room.currentBookings) {
+      room.currentBookings = room.currentBookings.filter((bid: any) => bid.toString() !== booking._id.toString());
+    }
+    room.occupiedBeds = Math.max(0, (room.occupiedBeds || 0) - numberOfPeople);
+    room.currentBooking = room.currentBookings && room.currentBookings.length > 0 ? room.currentBookings[0] : undefined;
+    room.status = (room.occupiedBeds === 0 || !room.currentBookings || room.currentBookings.length === 0) ? 'cleaning' : 'booked';
     await room.save();
 
     await logActivity(req.user!._id, 'freeze_booking', `${booking.guestDetails.fullName} muzlatildi. Qolgan summa: ${remaining.toLocaleString()} UZS`, 'booking', booking._id);
@@ -536,7 +557,7 @@ export const freezeBooking = async (req: AuthRequest, res: Response): Promise<vo
     const io = req.app.get('io');
     if (io) {
       io.emit('booking:update');
-      io.emit('room:statusChanged', { roomId: room._id, status: 'cleaning', roomNumber: room.roomNumber });
+      io.emit('room:statusChanged', { roomId: room._id, status: room.status, roomNumber: room.roomNumber });
       io.emit('dashboard:update', { type: 'freeze' });
     }
 
@@ -595,6 +616,9 @@ export const resumeBooking = async (req: AuthRequest, res: Response): Promise<vo
 
     room.status = 'booked';
     room.currentBooking = booking._id;
+    if (!room.currentBookings) room.currentBookings = [];
+    room.currentBookings.push(booking._id as mongoose.Types.ObjectId);
+    room.occupiedBeds = (room.occupiedBeds || 0) + numberOfPeople;
     await room.save();
 
     await logActivity(req.user!._id, 'resume_booking', `${booking.guestDetails.fullName} xona ${room.roomNumber}da davom etmoqda`, 'booking', booking._id);

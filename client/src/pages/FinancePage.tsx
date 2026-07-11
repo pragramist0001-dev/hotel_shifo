@@ -53,6 +53,8 @@ export default function FinancePage() {
 
   return (
     <div data-aos="fade-up" className="space-y-6">
+
+      {/* === SARLAVHA === */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -73,7 +75,7 @@ export default function FinancePage() {
         )}
       </div>
 
-      {/* FILTERLAR */}
+      {/* === FILTERLAR === */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end bg-white/70 dark:bg-zinc-950/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-md">
         <div className="flex items-center gap-2 flex-wrap">
           <Button size="sm" variant={!dateRange.startDate ? "default" : "outline"} className={!dateRange.startDate ? "bg-emerald-600 hover:bg-emerald-700" : ""} onClick={() => applyQuickFilter(0)}>{t('common.all', 'Barchasi')}</Button>
@@ -113,47 +115,66 @@ export default function FinancePage() {
         </div>
       </div>
 
-      {loadingSummary ? (
-        <div className="flex justify-center p-12">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+      {/* === STATISTIKA KARTALARI (har doim yuqorida) === */}
+      <div data-aos="fade-up" data-aos-delay="50" className="grid gap-4 md:grid-cols-3">
+        {/* Jami Daromad */}
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
+          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.income', 'Jami Daromad')}</h3>
+            <ArrowUpRight className="w-4 h-4 text-emerald-500" />
+          </div>
+          {loadingSummary ? (
+            <div className="h-8 w-3/4 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded mt-1" />
+          ) : (
+            <>
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{formatMoney(summary?.income?.total)}</div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{summary?.income?.count} {t('finance.transactions_count', 'ta tranzaksiya')}</p>
+            </>
+          )}
         </div>
-      ) : (
-        <div data-aos="fade-up" data-aos-delay="50" className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.income', 'Jami Daromad')}</h3>
-              <ArrowUpRight className="w-4 h-4 text-emerald-500" />
-            </div>
-            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{formatMoney(summary?.income?.total)}</div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{summary?.income?.count} {t('finance.transactions_count', 'ta tranzaksiya')}</p>
-          </div>
 
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.expense', 'Jami Chiqim')}</h3>
-              <ArrowDownRight className="w-4 h-4 text-red-500" />
-            </div>
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{formatMoney(summary?.expense?.total)}</div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{summary?.expense?.count} {t('finance.transactions_count', 'ta tranzaksiya')}</p>
+        {/* Jami Chiqim */}
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
+          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.expense', 'Jami Chiqim')}</h3>
+            <ArrowDownRight className="w-4 h-4 text-red-500" />
           </div>
-
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.balance', 'Sof Balans')}</h3>
-              <Wallet className="w-4 h-4 text-blue-500" />
-            </div>
-            <div className={cn(
-              "text-2xl font-bold",
-              (summary?.balance || 0) >= 0 ? "text-blue-600 dark:text-blue-400" : "text-red-600 dark:text-red-400"
-            )}>
-              {formatMoney(summary?.balance)}
-            </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('finance.profit_loss', 'Foyda / Zarar')}</p>
-          </div>
+          {loadingSummary ? (
+            <div className="h-8 w-3/4 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded mt-1" />
+          ) : (
+            <>
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">{formatMoney(summary?.expense?.total)}</div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{summary?.expense?.count} {t('finance.transactions_count', 'ta tranzaksiya')}</p>
+            </>
+          )}
         </div>
-      )}
 
+        {/* Sof Balans */}
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
+          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('finance.balance', 'Sof Balans')}</h3>
+            <Wallet className="w-4 h-4 text-blue-500" />
+          </div>
+          {loadingSummary ? (
+            <div className="h-8 w-3/4 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded mt-1" />
+          ) : (
+            <>
+              <div className={cn(
+                "text-2xl font-bold",
+                (summary?.balance || 0) >= 0 ? "text-blue-600 dark:text-blue-400" : "text-red-600 dark:text-red-400"
+              )}>
+                {formatMoney(summary?.balance)}
+              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('finance.profit_loss', 'Foyda / Zarar')}</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* === JADVAL + GRAFIK === */}
       <div data-aos="fade-up" data-aos-delay="100" className="grid gap-4 md:grid-cols-3">
+
+        {/* Tranzaksiyalar jadvali */}
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors md:col-span-2 overflow-hidden flex flex-col">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{t('finance.latest_transactions', "So'nggi Tranzaksiyalar")}</h3>
           <div className="overflow-x-auto w-full">
@@ -170,7 +191,13 @@ export default function FinancePage() {
               <tbody>
                 {loadingTx ? (
                   <tr>
-                    <td colSpan={4} className="text-center py-8 text-zinc-500">{t('common.loading', 'Yuklanmoqda...')}</td>
+                    <td colSpan={5} className="text-center py-8 text-zinc-500">
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto text-emerald-500" />
+                    </td>
+                  </tr>
+                ) : !txData?.transactions?.length ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8 text-zinc-400">{t('common.no_data', "Ma'lumot yo'q")}</td>
                   </tr>
                 ) : txData?.transactions?.map((tx: any) => (
                   <tr key={tx._id} className="border-b border-zinc-200 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 transition-colors">
@@ -216,6 +243,7 @@ export default function FinancePage() {
           </div>
         </div>
 
+        {/* Kirim/Chiqim grafigi */}
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors flex flex-col h-96">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{t('finance.income', 'Kirim')} / {t('finance.expense', 'Chiqim')}</h3>
           <div className="flex-1 w-full h-full min-h-0">
@@ -260,3 +288,4 @@ export default function FinancePage() {
     </div>
   );
 }
+

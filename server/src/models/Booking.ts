@@ -46,6 +46,7 @@ export interface IBooking extends Document {
   room: mongoose.Types.ObjectId;
   guestDetails: IGuestDetails;
   checkInDate: Date;
+  checkInTime?: string;
   checkOutDate: Date;
   actualCheckOut?: Date;
   numberOfNights: number;
@@ -104,6 +105,7 @@ const BookingSchema = new Schema<IBooking>(
       familyMembers: [FamilyMemberSchema]
     },
     checkInDate: { type: Date, required: true },
+    checkInTime: { type: String, trim: true },
     checkOutDate: { type: Date, required: true },
     actualCheckOut: { type: Date },
     numberOfNights: { type: Number, required: true, min: 1 },

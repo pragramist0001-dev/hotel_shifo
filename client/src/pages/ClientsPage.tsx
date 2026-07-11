@@ -10,8 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Plus, Edit, Trash2, Search, Users, Filter, Snowflake, Play, UserMinus, Printer, UserCog, Camera, Image as ImageIcon, X } from 'lucide-react';
+import { Loader2, Plus, Edit, Trash2, Search, Users, Filter, Snowflake, Play, UserMinus, Printer, UserCog, Camera, Image as ImageIcon, X, User, Phone, Calendar, MapPin, CreditCard, Clock, ExternalLink } from 'lucide-react';
 import { getImageUrl } from '../utils/imageUrl';
+import { useNavigate } from 'react-router-dom';
 
 
 // Move these inside component or use translation functions below
@@ -33,6 +34,7 @@ const PAYMENT_OPTS = [
 export default function ClientsPage() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { data: bookings, isLoading } = useBookings();
   const updateMutation = useUpdateBooking();
   const deleteMutation = useDeleteBooking();
@@ -45,6 +47,15 @@ export default function ClientsPage() {
   const checkoutMutation = useCheckOut();
 
   const { data: availableRooms } = useRooms({ status: 'available' });
+
+  // === Mijoz detail modal ===
+  const [clientDetailOpen, setClientDetailOpen] = useState(false);
+  const [detailBooking, setDetailBooking] = useState<any>(null);
+
+  const openClientDetail = (booking: any) => {
+    setDetailBooking(booking);
+    setClientDetailOpen(true);
+  };
 
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -388,15 +399,15 @@ export default function ClientsPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-zinc-50 dark:bg-zinc-900/50">
-                <TableHead className="font-semibold">Pasport / Istoriya</TableHead>
-                <TableHead className="font-semibold">{t('clients.table.client')}</TableHead>
-                <TableHead className="font-semibold">{t('clients.table.room')}</TableHead>
-                <TableHead className="font-semibold">{t('clients.table.stay')}</TableHead>
-                <TableHead className="font-semibold">{t('finance.table.amount')}</TableHead>
-                <TableHead className="font-semibold">{t('clients.paid')}</TableHead>
-                <TableHead className="font-semibold">{t('clients.debt')}</TableHead>
-                <TableHead className="font-semibold">{t('common.status')}</TableHead>
-                <TableHead className="text-right font-semibold">{t('common.actions')}</TableHead>
+                <TableHead className="font-semibold">{t('clients.table.passport_history', 'Pasport / Istoriya')}</TableHead>
+                <TableHead className="font-semibold">{t('clients.table.client', 'Mijoz')}</TableHead>
+                <TableHead className="font-semibold">{t('clients.table.room', 'Xona')}</TableHead>
+                <TableHead className="font-semibold">{t('clients.table.stay', 'Muddat')}</TableHead>
+                <TableHead className="font-semibold">{t('finance.table.amount', 'Summa')}</TableHead>
+                <TableHead className="font-semibold">{t('clients.paid', "To'langan")}</TableHead>
+                <TableHead className="font-semibold">{t('clients.debt', 'Qarz')}</TableHead>
+                <TableHead className="font-semibold">{t('common.status', 'Holat')}</TableHead>
+                <TableHead className="text-right font-semibold">{t('common.actions', 'Amallar')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -418,13 +429,16 @@ export default function ClientsPage() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <a href={`/clients/profile/${encodeURIComponent(booking.guestDetails.phone)}`} className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+                        <button
+                          onClick={() => openClientDetail(booking)}
+                          className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline text-left"
+                        >
                           {booking.guestDetails.fullName}
-                        </a>
+                        </button>
                         <p className="text-xs text-zinc-400 mt-0.5">{booking.guestDetails.phone}</p>
                         {familyCount > 1 && (
                           <span className="text-xs text-blue-500 bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 rounded-full inline-block mt-1">
-                            {familyCount} kishi
+                            {familyCount} {t('clients.people', 'kishi')}
                           </span>
                         )}
                       </div>
@@ -611,6 +625,216 @@ export default function ClientsPage() {
           </Button>
         </div>
       )}
+
+      {/* ===== MIJOZ DETAIL MODAL ===== */}
+      <Dialog open={clientDetailOpen} onOpenChange={setClientDetailOpen}>
+        <DialogContent className="sm:max-w-[620px] bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <User className="w-5 h-5 text-emerald-600" />
+              Mijoz ma'lumotlari
+            </DialogTitle>
+          </DialogHeader>
+
+          {detailBooking && (() => {
+            const db = detailBooking;
+            const familyMembers = db.guestDetails?.familyMembers || [];
+            const hasSpouse = db.guestDetails?.maritalStatus === 'married' && db.guestDetails?.spouseDetails?.fullName;
+            const familyCount = 1 + (hasSpouse ? 1 : 0) + familyMembers.length;
+            const debt = db.totalPrice - db.paidAmount;
+            const checkIn = new Date(db.checkInDate);
+            const checkOut = new Date(db.checkOutDate);
+
+            return (
+              <div className="space-y-4">
+                {/* Asosiy mehmon ma'lumotlari */}
+                <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4">
+                  <div className="flex items-start gap-4">
+                    {db.guestDetails?.guestImage ? (
+                      <img src={getImageUrl(db.guestDetails.guestImage) || ''} alt="Guest" className="w-16 h-16 rounded-xl object-cover border border-zinc-200 dark:border-zinc-700 flex-shrink-0" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
+                        <User className="w-8 h-8 text-zinc-400" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-lg text-zinc-900 dark:text-zinc-100">{db.guestDetails?.fullName}</p>
+                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
+                        <span className="flex items-center gap-1 text-sm text-zinc-500"><Phone className="w-3.5 h-3.5" />{db.guestDetails?.phone}</span>
+                        {db.guestDetails?.country && <span className="flex items-center gap-1 text-sm text-zinc-500"><MapPin className="w-3.5 h-3.5" />{db.guestDetails?.country}</span>}
+                        {db.guestDetails?.passportSeries && <span className="flex items-center gap-1 text-sm text-zinc-500"><CreditCard className="w-3.5 h-3.5" />{db.guestDetails?.passportSeries}</span>}
+                        {db.guestDetails?.historyNumber && <span className="flex items-center gap-1 text-sm text-zinc-500">ID: {db.guestDetails?.historyNumber}</span>}
+                        {db.guestDetails?.profession && <span className="flex items-center gap-1 text-sm text-zinc-500">{db.guestDetails?.profession}</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                    <div className="text-center">
+                      <p className="text-xs text-zinc-400">Xona</p>
+                      <p className="font-bold text-zinc-900 dark:text-zinc-100">#{db.room?.roomNumber || '?'}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-zinc-400">Kelgan</p>
+                      <p className="font-semibold text-zinc-800 dark:text-zinc-200 text-sm">{checkIn.toLocaleDateString('uz-UZ')}</p>
+                      {db.checkInTime && <p className="text-xs text-blue-500">{db.checkInTime}</p>}
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-zinc-400">Ketish</p>
+                      <p className="font-semibold text-zinc-800 dark:text-zinc-200 text-sm">{checkOut.toLocaleDateString('uz-UZ')}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-zinc-400">Kunlar</p>
+                      <p className="font-bold text-zinc-900 dark:text-zinc-100">{db.numberOfNights} kun</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Oila a'zolari */}
+                {familyCount > 1 && (
+                  <div className="rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/20 p-4">
+                    <p className="text-sm font-bold text-blue-700 dark:text-blue-400 mb-3 flex items-center gap-2">
+                      <Users className="w-4 h-4" /> Oila a'zolari ({familyCount} kishi)
+                    </p>
+                    <div className="space-y-2">
+                      {/* Asosiy mehmon */}
+                      <div className="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-lg px-3 py-2 border border-zinc-200 dark:border-zinc-800">
+                        {db.guestDetails?.guestImage ? (
+                          <img src={getImageUrl(db.guestDetails.guestImage) || ''} alt="" className="w-8 h-8 rounded-full object-cover border border-zinc-200 dark:border-zinc-700" />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center">
+                            <User className="w-4 h-4 text-zinc-400" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                            1. {db.guestDetails?.fullName}
+                          </span>
+                          <span className="ml-2 text-xs text-zinc-400">— Asosiy mehmon</span>
+                        </div>
+                        <span className="text-xs text-zinc-400">{db.guestDetails?.gender === 'male' ? '👨' : '👩'}</span>
+                      </div>
+                      {/* Turmush o'rtog'i */}
+                      {hasSpouse && (
+                        <div className="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-lg px-3 py-2 border border-zinc-200 dark:border-zinc-800">
+                          <div className="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center">
+                            <User className="w-4 h-4 text-pink-400" />
+                          </div>
+                          <div className="flex-1">
+                            <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                              2. {db.guestDetails.spouseDetails.fullName}
+                            </span>
+                            <span className="ml-2 text-xs text-zinc-400">— Turmush o'rtog'i</span>
+                          </div>
+                        </div>
+                      )}
+                      {/* Oila a'zolari */}
+                      {familyMembers.map((m: any, i: number) => (
+                        <div key={i} className="flex items-center gap-3 bg-white dark:bg-zinc-900 rounded-lg px-3 py-2 border border-zinc-200 dark:border-zinc-800">
+                          {m.guestImage ? (
+                            <img src={getImageUrl(m.guestImage) || ''} alt="" className="w-8 h-8 rounded-full object-cover border border-zinc-200 dark:border-zinc-700" />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                              <User className="w-4 h-4 text-blue-400" />
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                              {(hasSpouse ? 3 : 2) + i}. {m.fullName}
+                            </span>
+                            {m.relationship && <span className="ml-2 text-xs text-zinc-400">— {m.relationship}</span>}
+                          </div>
+                          <div className="text-right">
+                            {m.birthDate && <p className="text-xs text-zinc-400">{new Date(m.birthDate).toLocaleDateString('uz-UZ')}</p>}
+                            <span className="text-xs text-zinc-400">{m.gender === 'male' ? '👨' : '👩'}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* To'lov ma'lumotlari */}
+                <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4 grid grid-cols-3 gap-3">
+                  <div className="text-center">
+                    <p className="text-xs text-zinc-400">Jami</p>
+                    <p className="font-bold text-zinc-900 dark:text-zinc-100">{db.totalPrice?.toLocaleString()} UZS</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-zinc-400">To'langan</p>
+                    <p className="font-bold text-emerald-600 dark:text-emerald-400">{db.paidAmount?.toLocaleString()} UZS</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-zinc-400">Qarz</p>
+                    <p className={`font-bold ${debt > 0 ? 'text-red-600 dark:text-red-400' : 'text-zinc-400'}`}>
+                      {debt > 0 ? `${debt.toLocaleString()} UZS` : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Amallar */}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950 gap-1.5"
+                    onClick={() => { navigate(`/clients/profile/${encodeURIComponent(db.guestDetails.phone)}`); setClientDetailOpen(false); }}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Kabinetga o'tish
+                  </Button>
+
+                  {db.status === 'active' && debt > 0 && (
+                    <Button size="sm" variant="outline" className="border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950 gap-1.5"
+                      onClick={() => { setClientDetailOpen(false); openPaymentModal(db); }}>
+                      <Plus className="w-3.5 h-3.5" /> To'lov
+                    </Button>
+                  )}
+                  {db.status === 'active' && (
+                    <>
+                      <Button size="sm" variant="outline" className="gap-1.5 text-zinc-600"
+                        onClick={() => { setClientDetailOpen(false); openEditGuestModal(db); }}>
+                        <UserCog className="w-3.5 h-3.5" /> Tahrirlash
+                      </Button>
+                      <Button size="sm" variant="outline" className="gap-1.5 text-zinc-600"
+                        onClick={() => { setClientDetailOpen(false); openEditModal(db); }}>
+                        <Edit className="w-3.5 h-3.5" /> Sana
+                      </Button>
+                      <Button size="sm" variant="outline" className="gap-1.5 text-zinc-600"
+                        onClick={() => { setClientDetailOpen(false); handlePrintReceipt({ bookingId: db._id, guestName: db.guestDetails.fullName, roomNumber: db.room?.roomNumber || '-', checkInDate: checkIn.toLocaleDateString('uz-UZ'), checkOutDate: checkOut.toLocaleDateString('uz-UZ'), totalPrice: db.totalPrice, paidAmount: db.paidAmount, paymentMethod: db.paymentMethod || 'cash', cashierName: db.byReceptionist?.fullName || user?.fullName || 'Xodim', date: new Date().toLocaleString('uz-UZ') }); }}>
+                        <Printer className="w-3.5 h-3.5" /> Chek
+                      </Button>
+                      <Button size="sm" variant="outline" className="gap-1.5 text-cyan-600 border-cyan-300"
+                        onClick={() => { setClientDetailOpen(false); handleFreeze(db._id, db.guestDetails.fullName); }}>
+                        <Snowflake className="w-3.5 h-3.5" /> Muzlatish
+                      </Button>
+                      <Button size="sm" variant="outline" className="gap-1.5 text-orange-600 border-orange-300"
+                        onClick={() => { setClientDetailOpen(false); openRemoveFamilyModal(db); }}>
+                        <UserMinus className="w-3.5 h-3.5" /> Chiqarish
+                      </Button>
+                      <Button size="sm" variant="outline" className="gap-1.5 text-purple-600 border-purple-300"
+                        onClick={() => { if(window.confirm('Checkout qilmoqchimisiz?')) { checkoutMutation.mutate({ id: db._id }); setClientDetailOpen(false); } }}
+                        disabled={checkoutMutation.isPending}>
+                        {checkoutMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Clock className="w-3.5 h-3.5" />} Check-out
+                      </Button>
+                    </>
+                  )}
+                  {db.status === 'frozen' && (
+                    <Button size="sm" variant="outline" className="gap-1.5 text-blue-600 border-blue-300"
+                      onClick={() => { setClientDetailOpen(false); openResumeModal(db); }}>
+                      <Play className="w-3.5 h-3.5" /> Faollashtirish
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="gap-1.5 text-red-600 border-red-200 hover:bg-red-50"
+                    onClick={() => { setClientDetailOpen(false); handleDelete(db._id, db.guestDetails.fullName); }}
+                    disabled={deleteMutation.isPending}>
+                    <Trash2 className="w-3.5 h-3.5" /> O'chirish
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
 
       {/* Payment Modal */}
       <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
