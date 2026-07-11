@@ -53,9 +53,9 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
 
   const [formData, setFormData] = useState({
     roomNumber: '',
-    type: 'standard',
+    type: 'ekonom',
     floor: '1',
-    capacity: '1',
+    capacity: '2',
     pricePerNight: '',
     description: '',
     imageUrl: '',
@@ -71,14 +71,14 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
         roomNumber: editingRoom.roomNumber,
         type: editingRoom.type,
         floor: editingRoom.floor.toString(),
-        capacity: (editingRoom.capacity || 1).toString(),
+        capacity: (editingRoom.capacity ?? 1).toString(),
         pricePerNight: editingRoom.pricePerNight.toString(),
         description: editingRoom.description || '',
         imageUrl: editingRoom.imageUrl || '',
         status: editingRoom.status === 'booked' ? 'available' : (editingRoom.status || 'available'),
       });
     } else {
-      setFormData({ roomNumber: '', type: 'ekonom', floor: '1', capacity: '1', pricePerNight: '', description: '', imageUrl: '', status: 'available' });
+      setFormData({ roomNumber: '', type: 'ekonom', floor: '1', capacity: '2', pricePerNight: '', description: '', imageUrl: '', status: 'available' });
     }
     setError('');
     setUploadError('');
@@ -178,7 +178,7 @@ export default function RoomModal({ isOpen, onClose, editingRoom }: {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-zinc-700 dark:text-zinc-300">Sig'imi (Kishi) *</Label>
+              <Label className="text-zinc-700 dark:text-zinc-300">{t('rooms.capacity', "Sig'imi")} (Kishi) *</Label>
               <Input
                 type="text"
                 inputMode="numeric"

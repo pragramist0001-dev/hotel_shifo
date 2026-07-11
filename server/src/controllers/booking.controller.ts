@@ -22,12 +22,7 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
     const numberOfPeople = 1 + spouseCount + (guestDetails.familyMembers?.length || 0);
 
     if (room.status !== 'available') {
-      res.status(400).json({ message: `Xona ${room.roomNumber} hozirda ${room.status} holatida. Yoki xona to'lgan.` });
-      return;
-    }
-
-    if (room.capacity - (room.occupiedBeds || 0) < numberOfPeople) {
-      res.status(400).json({ message: `Xonada ${numberOfPeople} kishi uchun joy yetarli emas. Qolgan joy: ${room.capacity - (room.occupiedBeds || 0)} ta.` });
+      res.status(400).json({ message: `Xona ${room.roomNumber} hozirda ${room.status} holatida.` });
       return;
     }
 
@@ -103,12 +98,8 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
     if (!room.currentBookings) room.currentBookings = [];
     room.currentBookings.push(booking._id as mongoose.Types.ObjectId);
     room.occupiedBeds = (room.occupiedBeds || 0) + numberOfPeople;
-    
-    if (room.occupiedBeds >= room.capacity) {
-      room.status = 'booked';
-    } else {
-      room.status = 'available';
-    }
+    // Xona hamma vaqt 'booked' bo'ladi - bir guruh check-in qilganidan keyin
+    room.status = 'booked';
     await room.save();
 
     // Kirim tranzaksiyasi
@@ -219,14 +210,10 @@ export const checkOut = async (req: AuthRequest, res: Response): Promise<void> =
       ? room.currentBookings[0] 
       : undefined;
 
-    if (room.occupiedBeds === 0) {
+    if (room.occupiedBeds === 0 || !room.currentBookings || room.currentBookings.length === 0) {
       room.status = 'cleaning';
     } else {
-      if (room.occupiedBeds >= room.capacity) {
-        room.status = 'booked';
-      } else {
-        room.status = 'available';
-      }
+      room.status = 'booked';
     }
     await room.save();
 
@@ -675,12 +662,20 @@ export const removeFamilyMember = async (req: AuthRequest, res: Response): Promi
 
     await booking.save();
 
+    // Xona occupiedBeds ni kamaytirish
+    const room = await Room.findById(booking.room);
+    if (room) {
+      room.occupiedBeds = Math.max(0, (room.occupiedBeds || 0) - 1);
+      await room.save();
+    }
+
     await logActivity(req.user!._id, 'remove_family_member', `${removedMember.fullName} ketdi, ${Math.round(daysToAdd * 10) / 10} kun uzaytirildi.`, 'booking', booking._id);
 
     const io = req.app.get('io');
     if (io) {
       io.emit('booking:update');
       io.emit('dashboard:update', { type: 'family_remove' });
+      if (room) io.emit('room:statusChanged', { roomId: room._id, status: room.status, roomNumber: room.roomNumber });
     }
 
     res.json({ message: `Hamroh chiqarildi va muddat ${Math.round(daysToAdd * 10) / 10} kunga uzaytirildi.`, booking });
@@ -822,12 +817,20 @@ export const removeMainGuest = async (req: AuthRequest, res: Response): Promise<
 
     await booking.save();
 
+    // Xona occupiedBeds ni kamaytirish
+    const room = await Room.findById(booking.room);
+    if (room) {
+      room.occupiedBeds = Math.max(0, (room.occupiedBeds || 0) - 1);
+      await room.save();
+    }
+
     await logActivity(req.user!._id, 'remove_main_guest', `${removedMainGuestName} ketdi, ${Math.round(daysToAdd * 10) / 10} kun uzaytirildi.`, 'booking', booking._id);
 
     const io = req.app.get('io');
     if (io) {
       io.emit('booking:update');
       io.emit('dashboard:update', { type: 'family_remove' });
+      if (room) io.emit('room:statusChanged', { roomId: room._id, status: room.status, roomNumber: room.roomNumber });
     }
 
     res.json({ message: `Asosiy mehmon chiqarildi va muddat ${Math.round(daysToAdd * 10) / 10} kunga uzaytirildi.`, booking });

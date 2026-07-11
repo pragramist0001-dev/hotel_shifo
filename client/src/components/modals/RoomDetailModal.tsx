@@ -187,7 +187,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
             <div>
               <p className="text-4xl font-black text-zinc-900 dark:text-zinc-100">#{room?.roomNumber ?? '—'}</p>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {room ? `${getRoomTypeLabel(room.type, t)} • ${room.floor}-{t('rooms.floor_short', 'qavat')}` : ''}
+                {room ? `${getRoomTypeLabel(room.type, t)} • ${room.floor}-${t('rooms.floor_short', 'qavat')}` : ''}
               </p>
             </div>
             {statusCfg && StatusIcon && (
@@ -248,7 +248,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
                 />
                 <InfoRow label={t('rooms.type', 'Tur')} value={getRoomTypeLabel(room.type, t)} icon={Bed} />
                 <InfoRow label={t('rooms.floor_short', 'Qavat')} value={`${room.floor}-${t('rooms.floor_short', 'qavat')}`} icon={MapPin} />
-                <InfoRow label="Sig'imi" value={`${room.capacity || 1} kishi`} icon={Users} />
+                <InfoRow label={t('rooms.capacity', "Sig'imi")} value={room.capacity ? `${room.capacity} kishi` : '—'} icon={Users} />
                 {room.amenities?.length > 0 && (
                   <InfoRow
                     label={t('rooms.amenities', 'Qulayliklar')}
