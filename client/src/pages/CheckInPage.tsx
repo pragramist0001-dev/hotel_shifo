@@ -704,10 +704,9 @@ export default function CheckInPage() {
                   <SelectValue placeholder={loadingRooms ? t('checkin.loading') : t('checkin.select_room')} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 max-h-[300px]">
-                  {rooms?.map((room: any) => (
+                  {rooms?.filter((room: any) => (room.capacity - (room.occupiedBeds || 0)) >= numberOfPeople).map((room: any) => (
                     <SelectItem key={room._id} value={room._id} className="text-zinc-900 dark:text-zinc-100">
                       {t('modals.room.number').split(' ')[0]} {room.roomNumber} — {t(`roomType.${room.type}`)} ({room.pricePerNight.toLocaleString()} UZS) 
-                      {room.capacity > 0 && <span className="ml-2 text-emerald-500 font-bold bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded text-xs">({room.capacity - (room.occupiedBeds || 0)} {t('checkin.capacity_left', {count: ''}).replace('(', '').replace(')', '')})</span>}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -761,22 +760,9 @@ export default function CheckInPage() {
               <div className="flex justify-between items-center">
                 <span>{t('checkin.calc_guests')}</span>
                 <div className="flex items-center gap-2">
-                  <span className={`font-medium ${selectedRoom && numberOfPeople > (selectedRoom.capacity || 1) ? 'text-red-500 font-bold' : 'text-zinc-800 dark:text-zinc-200'}`}>
+                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
                     {numberOfPeople}
                   </span>
-                  {selectedRoom && (
-                    <span className="text-xs">
-                      {numberOfPeople > (selectedRoom.capacity || 1) ? (
-                        <span className="text-red-500 bg-red-50 dark:bg-red-950/30 px-1.5 py-0.5 rounded">
-                          {t('checkin.capacity_exceeded', { count: numberOfPeople - (selectedRoom.capacity || 1) })}
-                        </span>
-                      ) : (
-                        <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
-                          {t('checkin.capacity_left', { count: (selectedRoom.capacity || 1) - numberOfPeople })}
-                        </span>
-                      )}
-                    </span>
-                  )}
                 </div>
               </div>
               <div className="flex justify-between">
