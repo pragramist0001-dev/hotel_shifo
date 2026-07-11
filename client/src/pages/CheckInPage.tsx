@@ -51,7 +51,8 @@ export default function CheckInPage() {
   });
 
   type FormData = z.infer<typeof formSchema>;
-  const { data: rooms, isLoading: loadingRooms } = useRooms({ status: 'available' });
+  const { data: allRooms, isLoading: loadingRooms } = useRooms();
+  const rooms = allRooms?.filter((r: any) => r.status === 'available' || r.status === 'booked');
   const checkInMutation = useCheckIn();
   const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState('');

@@ -151,11 +151,21 @@ export default function RoomsPage() {
               {/* Status bar top */}
               <div className={cn("absolute top-0 left-0 w-full h-1 z-20", bgColor)}></div>
 
-              {/* Total Capacity Badge */}
+              {/* Dynamic Capacity Badge */}
               {room.capacity > 0 && (
-                <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-black/40 backdrop-blur-md text-white px-1.5 py-0.5 rounded text-[10px] font-medium border border-white/10 shadow-sm">
-                  <Users className="w-3 h-3 opacity-80" />
-                  <span>{room.capacity}</span>
+                <div className="absolute top-2 right-2 z-20 flex flex-col items-end gap-1 text-[10px] font-medium">
+                  {(room.occupiedBeds || 0) > 0 && (
+                    <div className="bg-red-500/90 backdrop-blur-md text-white px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+                      <Users className="w-2.5 h-2.5" />
+                      <span>{room.occupiedBeds} band</span>
+                    </div>
+                  )}
+                  {(room.capacity - (room.occupiedBeds || 0)) > 0 && (
+                    <div className="bg-emerald-500/90 backdrop-blur-md text-white px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+                      <Users className="w-2.5 h-2.5" />
+                      <span>{room.capacity - (room.occupiedBeds || 0)} bo'sh</span>
+                    </div>
+                  )}
                 </div>
               )}
 
