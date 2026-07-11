@@ -12,7 +12,7 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
   const activeDateRange = dateRange.startDate && dateRange.endDate ? dateRange : undefined;
-  
+
   const { data: stats, isLoading: loadingStats } = useDashboardStats(activeDateRange);
   const { data: revenueData, isLoading: loadingRevenue } = useRevenueChart('7days', activeDateRange);
   const { data: occupancyData, isLoading: loadingOccupancy } = useOccupancyChart();
@@ -59,26 +59,26 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 bg-white/70 dark:bg-zinc-950/50 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-md">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-zinc-400" />
-              <Input 
-                type="date" 
-                className="h-9 w-[130px] text-sm" 
-                value={dateRange.startDate} 
+              <Input
+                type="date"
+                className="h-9 w-[130px] text-sm"
+                value={dateRange.startDate}
                 onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
               />
             </div>
             <span className="text-zinc-400">-</span>
             <div className="flex items-center gap-2">
-              <Input 
-                type="date" 
-                className="h-9 w-[130px] text-sm" 
-                value={dateRange.endDate} 
+              <Input
+                type="date"
+                className="h-9 w-[130px] text-sm"
+                value={dateRange.endDate}
                 onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
               />
             </div>
           </div>
         </div>
       </div>
-      
+
       <div data-aos="fade-up" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -87,7 +87,7 @@ export default function DashboardPage() {
           <div className="text-2xl font-bold text-emerald-500 dark:text-emerald-400">{stats?.today?.income?.toLocaleString() || 0} UZS</div>
           <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">{t('dashboard.daily_income')}</p>
         </div>
-        
+
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.occupied_rooms')}</h3>
@@ -104,7 +104,8 @@ export default function DashboardPage() {
           <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">{t('dashboard.new_check_ins')}</p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
+        <div className="rounded-xl border bo
+        rder-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.check_outs_expected')}</h3>
           </div>
@@ -112,7 +113,7 @@ export default function DashboardPage() {
           <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">{t('dashboard.check_outs_today')}</p>
         </div>
       </div>
-      
+
       <div data-aos="fade-up" data-aos-delay="100" className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
         <div className="col-span-3 lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 mb-4">{t('dashboard.revenue_7days')}</h3>
@@ -121,14 +122,14 @@ export default function DashboardPage() {
               <AreaChart data={revenueData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-zinc-200 dark:text-zinc-800" vertical={false} />
                 <XAxis dataKey="date" stroke="currentColor" className="text-zinc-400" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="currentColor" className="text-zinc-400" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} />
-                <RechartsTooltip 
+                <RechartsTooltip
                   contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '8px' }}
                   itemStyle={{ color: '#e4e4e7' }}
                 />
@@ -169,7 +170,7 @@ export default function DashboardPage() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <RechartsTooltip 
+                <RechartsTooltip
                   contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '8px' }}
                   itemStyle={{ color: '#e4e4e7' }}
                   formatter={(value: any, _name: any, props: any) => [

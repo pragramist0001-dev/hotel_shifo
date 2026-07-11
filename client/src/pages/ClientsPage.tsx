@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Plus, Edit, Trash2, Search, Users, Filter, Snowflake, Play, UserMinus, Printer, UserCog, Camera, Image as ImageIcon, X, User, Phone, Calendar, MapPin, CreditCard, Clock, ExternalLink } from 'lucide-react';
+import { Loader2, Plus, Edit, Trash2, Search, Users, Filter, Snowflake, Play, UserMinus, Printer, UserCog, Camera, Image as ImageIcon, X, User, Phone, MapPin, CreditCard, Clock, ExternalLink } from 'lucide-react';
 import { getImageUrl } from '../utils/imageUrl';
 import { useNavigate } from 'react-router-dom';
 
