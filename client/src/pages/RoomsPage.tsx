@@ -194,11 +194,6 @@ export default function RoomsPage() {
                 <span className="text-2xl font-black text-zinc-900 dark:text-zinc-100">{room.roomNumber}</span>
                 <span className={cn("text-[11px] font-semibold mt-1 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-center flex flex-col items-center gap-0.5 leading-none", textColor)}>
                   <span>{getStatusText(room.status)}</span>
-                  {room.status === 'available' && room.capacity > 0 && (
-                    <span className="text-[9px] opacity-80 font-normal">
-                      {t('rooms.capacity_left', { count: room.capacity - (room.occupiedBeds || 0) }).replace('{{count}}', String(room.capacity - (room.occupiedBeds || 0)))}
-                    </span>
-                  )}
                 </span>
 
                 {/* Band xonada qolgan o'rinlar */}
