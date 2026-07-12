@@ -137,7 +137,7 @@ export default function RoomsPage() {
         )}
       </div>
 
-      <div data-aos="fade-up" data-aos-delay="100" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <div data-aos="fade-up" data-aos-delay="100" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {filteredRooms?.map((room: any) => {
           const statusClass = getStatusColor(room.status);
           const [bgColor, textColor] = statusClass.split(' ');

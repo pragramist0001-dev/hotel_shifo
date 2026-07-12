@@ -20,6 +20,7 @@ import StaffPage from './pages/StaffPage';
 import ProfilePage from './pages/ProfilePage';
 import ReceptionDashboardPage from './pages/ReceptionDashboardPage';
 import ReportsPage from './pages/ReportsPage';
+import FloatingIcons from './components/ui/FloatingIcons';
 
 // Role-based guard
 function AdminOnly({ children }: { children: React.ReactNode }) {
@@ -45,6 +46,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <FloatingIcons />
       <Routes>
         {/* Public Route */}
         <Route

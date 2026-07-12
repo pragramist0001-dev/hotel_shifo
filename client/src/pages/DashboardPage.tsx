@@ -79,7 +79,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div data-aos="fade-up" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div data-aos="fade-up" className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md transition-colors">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="tracking-tight text-sm font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.income')}</h3>
@@ -114,8 +114,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div data-aos="fade-up" data-aos-delay="100" className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
-        <div className="col-span-3 lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
+      <div data-aos="fade-up" data-aos-delay="100" className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-8">
+        <div className="col-span-1 md:col-span-2 lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 mb-4">{t('dashboard.revenue_7days')}</h3>
           <div className="flex-1 w-full h-full min-h-0">
             <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="col-span-3 lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
+        <div className="col-span-1 md:col-span-1 lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 p-6 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors">
           <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 mb-4">{t('dashboard.room_types')}</h3>
           <div className="flex-1 w-full h-full min-h-0">
             <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Xodimlar Hisobotlari Widget */}
-        <div className="col-span-2 lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors overflow-hidden">
+        <div className="col-span-1 md:col-span-1 lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/50 shadow-sm backdrop-blur-md h-96 flex flex-col transition-colors overflow-hidden">
           <div className="px-6 pt-6 pb-2 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
             <h3 className="font-semibold text-zinc-900 dark:text-zinc-200 flex items-center gap-2">
               <FileText className="w-4 h-4 text-emerald-500" />
