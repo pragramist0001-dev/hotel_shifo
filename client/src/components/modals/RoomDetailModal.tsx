@@ -103,7 +103,7 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
   const handleDeleteRoom = () => {
     if (!room) return;
     if (room.status === 'booked') {
-      setDeleteError(t('rooms.delete_booked_error', "Band xonani o'chirib bo'lmaydi. Avval mijozni check-out qiling."));
+      window.alert(t('rooms.delete_booked_error', "Band xonani o'chirib bo'lmaydi. Avval mijozni check-out qiling."));
       return;
     }
     if (window.confirm(`#${room.roomNumber} xonani rostdan ham o'chirmoqchimisiz?`)) {
@@ -202,31 +202,10 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-20 p-1.5 rounded-full bg-black/30 hover:bg-black/50 text-white transition-colors"
+          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-md hover:scale-105 transition-all"
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </button>
-
-        {/* Admin edit & delete buttons */}
-        {user?.role === 'admin' && room && (
-          <>
-            <button
-              onClick={handleDeleteRoom}
-              disabled={deleteRoom.isPending}
-              className="absolute top-3 right-20 z-20 p-1.5 rounded-full bg-red-600/80 hover:bg-red-700 text-white transition-colors disabled:opacity-50"
-              title={t('rooms.delete_room', "Xonani o'chirish")}
-            >
-              {deleteRoom.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-            </button>
-            <button
-              onClick={() => { onEdit?.(room); onClose(); }}
-              className="absolute top-3 right-11 z-20 p-1.5 rounded-full bg-black/30 hover:bg-black/50 text-white transition-colors"
-              title={t('rooms.edit_room', 'Xonani tahrirlash')}
-            >
-              <Edit2 className="w-4 h-4" />
-            </button>
-          </>
-        )}
 
         {/* Content */}
         <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
@@ -238,6 +217,27 @@ export default function RoomDetailModal({ roomId, onClose, onEdit }: Props) {
             <p className="text-center text-zinc-400 py-8">{t('common.no_data', "Ma'lumot topilmadi")}</p>
           ) : (
             <>
+              {/* === ADMIN AMALLARI === */}
+              {user?.role === 'admin' && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { onEdit?.(room); onClose(); }}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-medium text-sm transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    {t('rooms.edit_room', 'Tahrirlash')}
+                  </button>
+                  <button
+                    onClick={handleDeleteRoom}
+                    disabled={deleteRoom.isPending}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 font-medium text-sm transition-colors disabled:opacity-50"
+                  >
+                    {deleteRoom.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    {t('rooms.delete_room', "O'chirish")}
+                  </button>
+                </div>
+              )}
+
               {/* === XONA ASOSIY MA'LUMOTLARI === */}
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/30 px-4 py-1">
                 <InfoRow
