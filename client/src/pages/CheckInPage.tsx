@@ -441,7 +441,7 @@ export default function CheckInPage() {
 
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
-              <Input type="text" placeholder="12.05.1990" {...register('birthDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
+              <Input type="date" {...register('birthDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
               {errors.birthDate && <p className="text-xs text-red-500">{String(errors.birthDate.message)}</p>}
             </div>
 
@@ -627,8 +627,7 @@ export default function CheckInPage() {
                     <div className="space-y-1">
                       <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
                       <Input
-                        type="text"
-                        placeholder="12.05.1990"
+                        type="date"
                         value={member.birthDate || ''}
                         onChange={(e) => updateFamilyMember(index, 'birthDate', e.target.value)}
                         className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"

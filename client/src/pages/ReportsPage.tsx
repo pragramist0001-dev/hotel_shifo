@@ -29,8 +29,8 @@ function ReportModal({ isOpen, onClose, editData }: { isOpen: boolean; onClose: 
 
   useEffect(() => {
     if (isOpen && stats && !editData) {
-      let title = type === 'daily' ? t('reports.template.daily', 'KUNLIK HISOBOT') : type === 'weekly' ? t('reports.template.weekly', 'HAFTALIK HISOBOT') : t('reports.template.monthly', 'OYLIK HISOBOT');
-      let dateStr = new Date().toLocaleDateString('uz-UZ');
+      const title = type === 'daily' ? t('reports.template.daily', 'KUNLIK HISOBOT') : type === 'weekly' ? t('reports.template.weekly', 'HAFTALIK HISOBOT') : t('reports.template.monthly', 'OYLIK HISOBOT');
+      const dateStr = new Date().toLocaleDateString('uz-UZ');
       
       const text = `📋 ${title} (${dateStr})
 
