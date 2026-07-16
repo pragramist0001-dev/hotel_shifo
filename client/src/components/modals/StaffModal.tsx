@@ -50,8 +50,12 @@ export default function StaffModal({ isOpen, onClose, editingStaff }: Props) {
     e.preventDefault();
     setError('');
 
-    if (!isEdit && password.length < 6) {
+    if (password.length > 0 && password.length < 6) {
       setError(t('staff.err_pwd_length', "Parol kamida 6 ta belgidan iborat bo'lishi kerak."));
+      return;
+    }
+    if (!isEdit && password.length === 0) {
+      setError(t('staff.err_pwd_required', "Parol kiritilishi shart."));
       return;
     }
 
