@@ -2,6 +2,7 @@ import { Response } from 'express';
 import Report from '../models/Report';
 import Transaction from '../models/Transaction';
 import Booking from '../models/Booking';
+import User from '../models/User';
 import { AuthRequest } from '../middleware/auth.middleware';
 
 const calculateStats = async (type: string, userId: string) => {

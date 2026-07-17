@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import Reservation from '../models/Reservation';
 import Room from '../models/Room';
+import User from '../models/User';
 import { AuthRequest } from '../middleware/auth.middleware';
 
 // Barcha bronlarni olish
