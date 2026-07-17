@@ -3,6 +3,7 @@
     "dashboard": "Dashboard",
     "rooms": "Rooms",
     "checkIn": "Check In",
+    "reservations": "Reservations",
     "clients": "Clients",
     "finance": "Finance",
     "staff": "Staff",
@@ -456,5 +457,56 @@
       "confirm_pay": "Confirm Payment",
       "delete_client": "Delete Client"
     }
+  },
+  "reservations": {
+    "title": "Reservations",
+    "subtitle": "Pre-arrival room booking",
+    "new": "New Reservation",
+    "search_placeholder": "Name, phone, room number...",
+    "table": {
+      "room": "Room",
+      "guest": "Guest",
+      "phone": "Phone",
+      "guests_count": "Guests",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "checked_in": "Checked In"
+    },
+    "form": {
+      "title": "New Reservation",
+      "select_room": "Select Room",
+      "select_room_placeholder": "Select a room",
+      "no_rooms": "No available rooms",
+      "capacity_info": "Capacity: {{capacity}} guests · Price: {{price}} UZS/night",
+      "guest_name": "Guest Full Name",
+      "guest_name_placeholder": "First Last Name",
+      "phone": "Phone Number",
+      "phone_placeholder": "+998901234567",
+      "guests_count": "How many guests?",
+      "max_guests": "Maximum: {{count}} guests",
+      "checkin_date": "Check-in Date",
+      "checkout_date": "Check-out Date",
+      "notes": "Notes (optional)",
+      "notes_placeholder": "Additional information...",
+      "submit": "Reserve",
+      "cancel": "Cancel"
+    },
+    "actions": {
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "confirm_cancel": "Cancel reservation for {{name}}?",
+    "confirm_delete": "Delete this reservation?",
+    "nights": "{{count}} nights",
+    "people": "{{count}} guests",
+    "no_reservations": "No reservations found"
   }
 }

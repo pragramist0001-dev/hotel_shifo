@@ -3,6 +3,7 @@
     "dashboard": "Главная",
     "rooms": "Номера",
     "checkIn": "Регистрация",
+    "reservations": "Бронирование",
     "clients": "Клиенты",
     "finance": "Финансы",
     "staff": "Сотрудники",
@@ -456,5 +457,56 @@
       "confirm_pay": "Подтвердить оплату",
       "delete_client": "Удалить клиента"
     }
+  },
+  "reservations": {
+    "title": "Бронирование",
+    "subtitle": "Предварительное бронирование номера",
+    "new": "Новое бронирование",
+    "search_placeholder": "Имя, телефон, номер комнаты...",
+    "table": {
+      "room": "Номер",
+      "guest": "Гость",
+      "phone": "Телефон",
+      "guests_count": "Гостей",
+      "checkin": "Заезд",
+      "checkout": "Выезд",
+      "status": "Статус",
+      "actions": "Действия"
+    },
+    "status": {
+      "pending": "Ожидается",
+      "confirmed": "Подтверждено",
+      "cancelled": "Отменено",
+      "checked_in": "Заселился"
+    },
+    "form": {
+      "title": "Новое бронирование",
+      "select_room": "Выберите номер",
+      "select_room_placeholder": "Выберите номер",
+      "no_rooms": "Нет свободных номеров",
+      "capacity_info": "Вместимость: {{capacity}} чел. · Цена: {{price}} UZS/сутки",
+      "guest_name": "Полное имя гостя",
+      "guest_name_placeholder": "Имя Фамилия",
+      "phone": "Номер телефона",
+      "phone_placeholder": "+998901234567",
+      "guests_count": "Сколько гостей приедет?",
+      "max_guests": "Максимум: {{count}} чел.",
+      "checkin_date": "Дата заезда",
+      "checkout_date": "Дата выезда",
+      "notes": "Примечание (необязательно)",
+      "notes_placeholder": "Дополнительная информация...",
+      "submit": "Забронировать",
+      "cancel": "Отмена"
+    },
+    "actions": {
+      "confirm": "Подтвердить",
+      "cancel": "Отменить",
+      "delete": "Удалить"
+    },
+    "confirm_cancel": "Отменить бронирование для {{name}}?",
+    "confirm_delete": "Удалить это бронирование?",
+    "nights": "{{count}} дн.",
+    "people": "{{count}} чел.",
+    "no_reservations": "Бронирований нет"
   }
 }

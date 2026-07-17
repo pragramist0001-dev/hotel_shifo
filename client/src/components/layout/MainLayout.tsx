@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, BedDouble, FileText, CreditCard, Users, LogOut, Sun, Moon, Globe, ClipboardList, MessageCircle, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BedDouble, FileText, CreditCard, Users, LogOut, Sun, Moon, Globe, ClipboardList, MessageCircle, Menu, X, CalendarCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRealTimeEvents } from '../../hooks/useRealTimeEvents';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +31,7 @@ export default function MainLayout() {
     { name: t('nav.dashboard'), path: '/', icon: <LayoutDashboard className="w-5 h-5" />, roles: ['admin', 'reception'] },
     { name: t('nav.rooms'), path: '/rooms', icon: <BedDouble className="w-5 h-5" />, roles: ['admin', 'reception'] },
     { name: t('nav.checkIn'), path: '/check-in', icon: <FileText className="w-5 h-5" />, roles: ['admin', 'reception'] },
+    { name: t('nav.reservations', 'Bron (Zanit)'), path: '/reservations', icon: <CalendarCheck className="w-5 h-5" />, roles: ['admin', 'reception'] },
     { name: t('nav.clients', 'Mijozlar'), path: '/clients', icon: <Users className="w-5 h-5" />, roles: ['admin', 'reception'] },
     { name: t('nav.finance'), path: '/finance', icon: <CreditCard className="w-5 h-5" />, roles: ['admin'] },
     { name: t('nav.reports', 'Hisobotlar'), path: '/reports', icon: <ClipboardList className="w-5 h-5" />, roles: ['admin', 'reception'] },

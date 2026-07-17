@@ -18,6 +18,7 @@ import staffRoutes from './routes/staff.routes';
 import uploadRoutes from './routes/upload.routes';
 import reportRoutes from './routes/report.routes';
 import chatRoutes from './routes/chat.routes';
+import reservationRoutes from './routes/reservation.routes';
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.use('/api/staff', staffRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

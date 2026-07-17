@@ -3,6 +3,7 @@
     "dashboard": "Bosh sahifa",
     "rooms": "Xonalar",
     "checkIn": "Joylashtirish",
+    "reservations": "Bron (Zanit)",
     "clients": "Mijozlar",
     "finance": "Moliya",
     "staff": "Xodimlar",
@@ -456,5 +457,56 @@
       "confirm_pay": "To'lovni tasdiqlash",
       "delete_client": "Mijozni o'chirish"
     }
+  },
+  "reservations": {
+    "title": "Bron (Zanit)",
+    "subtitle": "Kelishidan oldin xonani band qilish",
+    "new": "Yangi bron",
+    "search_placeholder": "Ism, telefon, xona raqami...",
+    "table": {
+      "room": "Xona",
+      "guest": "Mehmon",
+      "phone": "Telefon",
+      "guests_count": "Kishilar",
+      "checkin": "Kelish",
+      "checkout": "Ketish",
+      "status": "Holat",
+      "actions": "Amallar"
+    },
+    "status": {
+      "pending": "Kutilmoqda",
+      "confirmed": "Tasdiqlangan",
+      "cancelled": "Bekor qilingan",
+      "checked_in": "Check-in qilindi"
+    },
+    "form": {
+      "title": "Yangi bron yaratish",
+      "select_room": "Xona tanlang",
+      "select_room_placeholder": "Xona tanlang",
+      "no_rooms": "Bo'sh xona yo'q",
+      "capacity_info": "Sig'imi: {{capacity}} kishi · Narxi: {{price}} UZS/kun",
+      "guest_name": "Mehmon to'liq ismi",
+      "guest_name_placeholder": "Ism Familiya",
+      "phone": "Telefon raqami",
+      "phone_placeholder": "+998901234567",
+      "guests_count": "Nechta kishi keladi?",
+      "max_guests": "Maksimal: {{count}} kishi",
+      "checkin_date": "Kelish sanasi",
+      "checkout_date": "Ketish sanasi",
+      "notes": "Izoh (ixtiyoriy)",
+      "notes_placeholder": "Qo'shimcha ma'lumot...",
+      "submit": "Bron qilish",
+      "cancel": "Bekor"
+    },
+    "actions": {
+      "confirm": "Tasdiqlash",
+      "cancel": "Bekor qilish",
+      "delete": "O'chirish"
+    },
+    "confirm_cancel": "{{name}} bronini bekor qilasizmi?",
+    "confirm_delete": "Bronni o'chirasizmi?",
+    "nights": "{{count}} kun",
+    "people": "{{count}} kishi",
+    "no_reservations": "Bron yo'q"
   }
 }

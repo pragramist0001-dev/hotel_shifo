@@ -20,6 +20,7 @@ import StaffPage from './pages/StaffPage';
 import ProfilePage from './pages/ProfilePage';
 import ReceptionDashboardPage from './pages/ReceptionDashboardPage';
 import ReportsPage from './pages/ReportsPage';
+import ReservationsPage from './pages/ReservationsPage';
 import FloatingIcons from './components/ui/FloatingIcons';
 
 // Role-based guard
@@ -69,6 +70,7 @@ function App() {
           {/* Shared */}
           <Route path="rooms" element={<RoomsPage />} />
           <Route path="check-in" element={<CheckInPage />} />
+          <Route path="reservations" element={<ReservationsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="clients" element={<ClientsPage />} />

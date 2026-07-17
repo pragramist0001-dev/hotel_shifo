@@ -108,6 +108,8 @@ export default function CheckInPage() {
 
   const nights = calculateNights();
   const numberOfPeople = 1 + familyMembers.length;
+  const availableSpotsForNewGuests = selectedRoom ? (selectedRoom.capacity || 0) : Infinity;
+  const canAddMoreMembers = numberOfPeople < availableSpotsForNewGuests;
 
   const effectiveMainPrice = mainGuestPrice
     ? Number(mainGuestPrice)
@@ -540,14 +542,23 @@ export default function CheckInPage() {
                 )}
               </h3>
             </div>
-            <Button
-              type="button"
-              onClick={addFamilyMember}
-              className="flex items-center gap-1 text-sm bg-blue-600 hover:bg-blue-700 text-white h-8 px-3"
-            >
-              <UserPlus className="w-4 h-4" />
-              {t('checkin.add_member')}
-            </Button>
+            <div className="flex flex-col items-end gap-1">
+              {selectedRoom && (
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${canAddMoreMembers ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400' : 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400'}`}>
+                  {numberOfPeople}/{selectedRoom.capacity} {t('checkin.people_count', 'kishi')}
+                </span>
+              )}
+              <Button
+                type="button"
+                onClick={addFamilyMember}
+                disabled={!selectedRoom || !canAddMoreMembers}
+                title={!canAddMoreMembers ? `Xona to'ldi (${selectedRoom?.capacity} ta joy)` : ''}
+                className="flex items-center gap-1 text-sm bg-blue-600 hover:bg-blue-700 text-white h-8 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <UserPlus className="w-4 h-4" />
+                {t('checkin.add_member')}
+              </Button>
+            </div>
           </div>
 
           {familyMembers.length === 0 ? (
@@ -719,11 +730,17 @@ export default function CheckInPage() {
                   <SelectValue placeholder={loadingRooms ? t('checkin.loading') : t('checkin.select_room')} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 max-h-[300px]">
-                  {rooms?.filter((room: any) => (room.capacity - (room.occupiedBeds || 0)) >= numberOfPeople).map((room: any) => (
-                    <SelectItem key={room._id} value={room._id} className="text-zinc-900 dark:text-zinc-100">
-                      {t('modals.room.number').split(' ')[0]} {room.roomNumber} — {t(`roomType.${room.type}`)} ({room.pricePerNight.toLocaleString()} UZS) 
-                    </SelectItem>
-                  ))}
+                  {rooms?.filter((room: any) => {
+                    const free = (room.capacity || 0) - (room.occupiedBeds || 0);
+                    return free >= 1;
+                  }).map((room: any) => {
+                    const free = (room.capacity || 0) - (room.occupiedBeds || 0);
+                    return (
+                      <SelectItem key={room._id} value={room._id} className="text-zinc-900 dark:text-zinc-100">
+                        {t('modals.room.number').split(' ')[0]} {room.roomNumber} — {t(`roomType.${room.type}`)} ({room.pricePerNight.toLocaleString()} UZS) · {free}/{room.capacity || '?'} {t('checkin.people_count', 'joy')}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
               {errors.roomId && <p className="text-xs text-red-500">{String(errors.roomId.message)}</p>}
