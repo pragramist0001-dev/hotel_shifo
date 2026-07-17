@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+
+let mongoServer: MongoMemoryServer;
 
 export const connectDB = async () => {
-  const workerId = process.env.JEST_WORKER_ID || '1';
-  const uri = process.env.TEST_MONGO_URI || `mongodb://127.0.0.1:27017/sanatory_test_db_${workerId}`;
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
   await mongoose.connect(uri);
 };
 
@@ -10,6 +13,9 @@ export const closeDB = async () => {
   if (mongoose.connection.readyState !== 0) {
     await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
+  }
+  if (mongoServer) {
+    await mongoServer.stop();
   }
 };
 

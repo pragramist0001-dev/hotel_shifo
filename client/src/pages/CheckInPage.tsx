@@ -151,8 +151,21 @@ export default function CheckInPage() {
     (updated[index] as any)[field] = value;
 
     if (field === 'birthDate') {
-      const birthYear = new Date(value).getFullYear();
-      const age = new Date().getFullYear() - birthYear;
+      let birthYear = 0;
+      if (value) {
+        if (value.includes('.')) {
+          birthYear = Number(value.split('.').pop());
+        } else if (value.includes('-')) {
+          birthYear = Number(value.split('-')[0]);
+        } else if (value.includes('/')) {
+          birthYear = Number(value.split('/').pop());
+        } else if (!isNaN(Number(value)) && value.length === 4) {
+          birthYear = Number(value);
+        } else {
+          birthYear = new Date(value).getFullYear();
+        }
+      }
+      const age = new Date().getFullYear() - (birthYear || new Date().getFullYear());
       if (age <= 3) updated[index].customPrice = 0;
       else if (age >= 4 && age <= 13) updated[index].customPrice = 140000;
       else updated[index].customPrice = effectiveMainPrice;
@@ -189,7 +202,7 @@ export default function CheckInPage() {
         const formData = new FormData();
         formData.append('image', guestImageFile);
         const token = localStorage.getItem('accessToken');
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
         const res = await fetch(`${apiUrl}/upload/image`, {
           method: 'POST',
           headers: {
@@ -210,7 +223,7 @@ export default function CheckInPage() {
             const formData = new FormData();
             formData.append('image', m.guestImageFile);
             const token = localStorage.getItem('accessToken');
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
             const res = await fetch(`${apiUrl}/upload/image`, {
               method: 'POST',
               headers: {
@@ -441,7 +454,7 @@ export default function CheckInPage() {
 
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
-              <Input type="date" {...register('birthDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
+              <Input type="text" placeholder="DD.MM.YYYY" {...register('birthDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
               {errors.birthDate && <p className="text-xs text-red-500">{String(errors.birthDate.message)}</p>}
             </div>
 
@@ -627,7 +640,8 @@ export default function CheckInPage() {
                     <div className="space-y-1">
                       <Label className="text-xs text-zinc-600 dark:text-zinc-400">{t('checkin.birth_date', 'Tug\'ilgan sana')}</Label>
                       <Input
-                        type="date"
+                        type="text"
+                        placeholder="DD.MM.YYYY"
                         value={member.birthDate || ''}
                         onChange={(e) => updateFamilyMember(index, 'birthDate', e.target.value)}
                         className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 h-9 text-sm"
@@ -716,7 +730,7 @@ export default function CheckInPage() {
 
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('modals.room_detail.check_in').replace(': ', '')}</Label>
-              <Input type="date" {...register('checkInDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
+              <Input type="text" placeholder="YYYY-MM-DD" {...register('checkInDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
             </div>
 
             <div className="space-y-2">
@@ -732,7 +746,7 @@ export default function CheckInPage() {
 
             <div className="space-y-2">
               <Label className="text-zinc-700 dark:text-zinc-300">{t('modals.room_detail.check_out').replace(': ', '')}</Label>
-              <Input type="date" {...register('checkOutDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
+              <Input type="text" placeholder="YYYY-MM-DD" {...register('checkOutDate')} className="bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100" />
             </div>
 
             <div className="space-y-2">

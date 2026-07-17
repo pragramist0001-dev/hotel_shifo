@@ -20,7 +20,7 @@ export const getImageUrl = (url: string | null | undefined): string | null => {
   }
 
   if (normalizedUrl.startsWith('/uploads/')) {
-    const serverUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
+    const serverUrl = (import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api')).replace('/api', '');
     return `${serverUrl}${normalizedUrl}`;
   }
   

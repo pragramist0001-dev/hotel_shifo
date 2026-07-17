@@ -207,7 +207,7 @@ export default function ClientsPage() {
         formData.append('image', editGuestData.guestImageFile);
         
         const token = localStorage.getItem('accessToken');
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
         
         const res = await fetch(`${apiUrl}/upload/image`, {
           method: 'POST',
