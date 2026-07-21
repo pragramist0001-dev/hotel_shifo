@@ -53,7 +53,15 @@ export default function CheckInPage() {
 
   type FormData = z.infer<typeof formSchema>;
   const { data: allRooms, isLoading: loadingRooms } = useRooms();
-  const rooms = allRooms?.filter((r: any) => r.status === 'available' || r.status === 'booked');
+  const rooms = allRooms?.filter((r: any) => {
+    // Faqat bo'sh (available) yoki qisman band (booked, ammo sig'imi to'lmagan) xonalarni ko'rsat
+    if (r.status === 'available') return true;
+    if (r.status === 'booked') {
+      const remaining = (r.capacity || 1) - (r.occupiedBeds || 0);
+      return remaining > 0; // Hali joy bor bo'lsa ko'rsat
+    }
+    return false;
+  });
   const checkInMutation = useCheckIn();
   const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState('');
@@ -108,8 +116,12 @@ export default function CheckInPage() {
 
   const nights = calculateNights();
   const numberOfPeople = 1 + familyMembers.length;
-  const availableSpotsForNewGuests = selectedRoom ? (selectedRoom.capacity || 0) : Infinity;
-  const canAddMoreMembers = numberOfPeople < availableSpotsForNewGuests;
+
+  // Bo'sh joylar: capacity - occupiedBeds (allaqachon band bo'lgan joylarni hisobga oladi)
+  const remainingSpots = selectedRoom 
+    ? Math.max(0, (selectedRoom.capacity || 1) - (selectedRoom.occupiedBeds || 0))
+    : Infinity;
+  const canAddMoreMembers = numberOfPeople < remainingSpots;
 
   const effectiveMainPrice = mainGuestPrice
     ? Number(mainGuestPrice)
@@ -351,17 +363,26 @@ export default function CheckInPage() {
             </div>
           ) : (
             <div className="px-5 py-3 flex flex-wrap gap-2">
-              {availableRooms.slice(0, 12).map((r: any) => (
-                <span
-                  key={r._id}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-xs font-bold"
-                >
-                  #{r.roomNumber}
-                  {r.capacity > 0 && (
-                    <span className="text-emerald-400 dark:text-emerald-600 font-normal">·{r.capacity}o'rin</span>
-                  )}
-                </span>
-              ))}
+              {availableRooms.slice(0, 12).map((r: any) => {
+                const remaining = Math.max(0, (r.capacity || 1) - (r.occupiedBeds || 0));
+                const isPartial = r.status === 'booked' && remaining > 0;
+                return (
+                  <span
+                    key={r._id}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-bold ${
+                      isPartial 
+                        ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400'
+                        : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400'
+                    }`}
+                  >
+                    #{r.roomNumber}
+                    {r.capacity > 0 && (
+                      <span className="opacity-70 font-normal">·{remaining}/{r.capacity}</span>
+                    )}
+                    {isPartial && <span className="text-amber-500">⚡</span>}
+                  </span>
+                );
+              })}
               {availableRooms.length > 12 && (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-xs font-medium">
                   +{availableRooms.length - 12} ta yana
@@ -545,14 +566,17 @@ export default function CheckInPage() {
             <div className="flex flex-col items-end gap-1">
               {selectedRoom && (
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${canAddMoreMembers ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400' : 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400'}`}>
-                  {numberOfPeople}/{selectedRoom.capacity} {t('checkin.people_count', 'kishi')}
+                  {numberOfPeople + (selectedRoom.occupiedBeds || 0)}/{selectedRoom.capacity} {t('checkin.people_count', 'kishi')}
+                  {(selectedRoom.occupiedBeds || 0) > 0 && (
+                    <span className="ml-1 opacity-70">(+{selectedRoom.occupiedBeds || 0} band)</span>
+                  )}
                 </span>
               )}
               <Button
                 type="button"
                 onClick={addFamilyMember}
                 disabled={!selectedRoom || !canAddMoreMembers}
-                title={!canAddMoreMembers ? `Xona to'ldi (${selectedRoom?.capacity} ta joy)` : ''}
+                title={!canAddMoreMembers ? `Xona to'ldi (${selectedRoom?.capacity} ta joy, ${selectedRoom?.occupiedBeds || 0} ta band)` : `Bo'sh joy: ${remainingSpots === Infinity ? '∞' : remainingSpots} ta`}
                 className="flex items-center gap-1 text-sm bg-blue-600 hover:bg-blue-700 text-white h-8 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <UserPlus className="w-4 h-4" />

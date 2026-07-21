@@ -21,8 +21,20 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
     const spouseCount = (guestDetails.maritalStatus === 'married' && guestDetails.spouseDetails?.fullName) ? 1 : 0;
     const numberOfPeople = 1 + spouseCount + (guestDetails.familyMembers?.length || 0);
 
-    if (room.status !== 'available') {
-      res.status(400).json({ message: `Xona ${room.roomNumber} hozirda ${room.status} holatida.` });
+    // Xona mavjudligini va sig'imini tekshirish
+    if (room.status !== 'available' && room.status !== 'booked') {
+      res.status(400).json({ message: `Xona ${room.roomNumber} hozirda ${room.status} holatida (tozalanmoqda yoki ta'mirda).` });
+      return;
+    }
+
+    // Sig'im tekshirish: bo'sh joy qolganmi?
+    const currentOccupied = room.occupiedBeds || 0;
+    const roomCapacity = room.capacity || 1;
+    const remainingSpots = roomCapacity - currentOccupied;
+    if (remainingSpots < numberOfPeople) {
+      res.status(400).json({ 
+        message: `Xona ${room.roomNumber}da faqat ${remainingSpots} ta bo'sh joy bor, siz ${numberOfPeople} ta odam joylashtirishga urinayapsiz.` 
+      });
       return;
     }
 
@@ -102,7 +114,7 @@ export const checkIn = async (req: AuthRequest, res: Response): Promise<void> =>
     if (!room.currentBookings) room.currentBookings = [];
     room.currentBookings.push(booking._id as mongoose.Types.ObjectId);
     room.occupiedBeds = (room.occupiedBeds || 0) + numberOfPeople;
-    // Xona hamma vaqt 'booked' bo'ladi - bir guruh check-in qilganidan keyin
+    // Xona sig'imi to'la to'lgandagina 'booked' (to'lgan), aks holda ham 'booked'
     room.status = 'booked';
     await room.save();
 
