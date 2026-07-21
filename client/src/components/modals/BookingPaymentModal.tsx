@@ -27,7 +27,7 @@ export default function BookingPaymentModal({
     amount: '',
     paymentMethod: 'cash',
   });
-  
+
   const [receiptImage, setReceiptImage] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -44,10 +44,10 @@ export default function BookingPaymentModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!booking) return;
-    
+
     setIsUploading(true);
     let imageUrl = '';
-    
+
     try {
       if (receiptImage) {
         const uploadData = new FormData();
@@ -165,9 +165,9 @@ export default function BookingPaymentModal({
                 </div>
                 {receiptImage && (
                   <div className="w-full max-h-48 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900">
-                    <img 
-                      src={URL.createObjectURL(receiptImage)} 
-                      alt="Receipt preview" 
+                    <img
+                      src={URL.createObjectURL(receiptImage)}
+                      alt="Receipt preview"
                       className="max-w-full max-h-48 object-contain"
                     />
                   </div>
