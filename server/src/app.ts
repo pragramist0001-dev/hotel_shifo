@@ -26,13 +26,22 @@ const app = express();
 const server = http.createServer(app);
 
 // CORS origins - bir nechta URL ni qo'llab-quvvatlash (vergul bilan ajratilgan)
-const getAllowedOrigins = (): string | string[] => {
+const getAllowedOrigins = (): string[] => {
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-  // Vergul bilan ajratilgan bir nechta URL bo'lishi mumkin
+  let origins: string[] = [];
+  
   if (clientUrl.includes(',')) {
-    return clientUrl.split(',').map((u) => u.trim());
+    origins = clientUrl.split(',').map((u) => u.trim());
+  } else {
+    origins = [clientUrl];
   }
-  return clientUrl;
+
+  // Local development uchun qo'shimcha portlarni avtomatik qo'shish
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    origins.push('http://localhost:5174', 'http://localhost:5175', 'http://localhost:4173');
+  }
+
+  return origins;
 };
 
 const allowedOrigins = getAllowedOrigins();
